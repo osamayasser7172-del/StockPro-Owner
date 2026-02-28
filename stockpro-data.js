@@ -5,8 +5,10 @@
 
 // ── Server Configuration ─────────────────────────
 const SP_SERVER_URL = (function () {
-    // Auto-detect server URL from current page origin
-    if (location.protocol === 'file:') return 'http://localhost:3000';
+    // Production server on Render
+    if (location.protocol === 'file:' || location.hostname === '127.0.0.1' || location.hostname === 'localhost') {
+        return 'https://stockpro-owner.onrender.com';
+    }
     return location.origin;
 })();
 

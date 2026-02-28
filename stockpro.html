@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StockPro — نظام إدارة المخازن والمبيعات</title>
+    <meta name="description" content="نظام ذكي لإدارة المخازن والمبيعات والعملاء والموردين - مناسب للسوق المصري">
+    <link rel="stylesheet" href="stockpro.css">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#6366f1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+
+<body data-theme="dark">
+
+    <!-- ══ SERIAL ACTIVATION ═══════════════════════════ -->
+    <div id="serial-activation-screen" class="hidden">
+        <div class="admin-login-bg"></div>
+        <div class="admin-login-box" style="max-width:420px">
+            <div class="admin-login-logo">🔑</div>
+            <div class="admin-login-title">تفعيل StockPro</div>
+            <div class="admin-login-sub">أدخل مفتاح الترخيص (Serial Number) لتفعيل البرنامج</div>
+            <div class="form-group" style="text-align:right;margin-bottom:12px">
+                <label style="display:block;font-size:12px;color:var(--muted);margin-bottom:4px;font-weight:600">مفتاح
+                    الترخيص</label>
+                <input type="text" class="admin-login-input" id="sp-serial-input" placeholder="SP-XXXX-XXXX-XXXX-XXXX"
+                    style="direction:ltr;text-align:center;font-family:monospace;font-size:16px;letter-spacing:1px"
+                    onkeydown="if(event.key==='Enter')activateSerial()">
+            </div>
+            <div id="sp-serial-error" style="color:#f87171;font-size:12px;margin-bottom:10px;min-height:18px"></div>
+            <div id="sp-serial-client-info" class="hidden"
+                style="background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.3);border-radius:10px;padding:10px;margin-bottom:12px;text-align:right">
+                <div style="font-size:12px;color:#22c55e;font-weight:700" id="sp-serial-client-name"></div>
+            </div>
+            <button class="admin-login-btn" onclick="activateSerial()">🔓 تفعيل الترخيص</button>
+            <div style="margin-top:16px;font-size:11px;color:var(--muted)">تواصل مع الدعم الفني للحصول على مفتاح الترخيص
+            </div>
+        </div>
+    </div>
+
+    <!-- ══ ADMIN LOGIN ═════════════════════════════════ -->
+    <div id="admin-login-screen">
+        <div class="admin-login-bg"></div>
+        <div class="admin-login-box">
+            <div class="admin-login-logo">📦</div>
+            <div class="admin-login-title">StockPro</div>
+            <div class="admin-login-sub">سجّل دخولك لبدء استخدام النظام</div>
+            <div class="form-group" style="text-align:right;margin-bottom:12px">
+                <label style="display:block;font-size:12px;color:var(--muted);margin-bottom:4px;font-weight:600">اسم
+                    المستخدم</label>
+                <input type="text" class="admin-login-input" id="sp-login-user" placeholder="admin">
+            </div>
+            <div class="form-group" style="text-align:right;margin-bottom:12px">
+                <label style="display:block;font-size:12px;color:var(--muted);margin-bottom:4px;font-weight:600">كلمة
+                    المرور</label>
+                <input type="password" class="admin-login-input" id="sp-login-pass" placeholder="••••••"
+                    onkeydown="if(event.key==='Enter') spAdminLogin()">
+            </div>
+            <div id="sp-login-error" style="color:#f87171;font-size:12px;margin-bottom:8px;min-height:18px"></div>
+            <button class="admin-login-btn" onclick="spAdminLogin()">🔓 تسجيل الدخول</button>
+        </div>
+    </div>
+
+    <!-- ══ LOCK SCREEN ═══════════════════════════════ -->
+    <div id="lock-screen" class="hidden">
+        <div class="lock-bg"></div>
+        <div class="lock-box">
+            <div class="lock-icon" id="lock-icon">🔐</div>
+            <div class="lock-title">أدخل رمز الدخول</div>
+            <div class="lock-sub" id="lock-biz-label">StockPro</div>
+            <div class="lock-dots">
+                <div class="lock-dot" id="dot-0"></div>
+                <div class="lock-dot" id="dot-1"></div>
+                <div class="lock-dot" id="dot-2"></div>
+                <div class="lock-dot" id="dot-3"></div>
+            </div>
+            <div class="lock-numpad">
+                <button class="lock-key" onclick="lockKey('1')">1</button>
+                <button class="lock-key" onclick="lockKey('2')">2</button>
+                <button class="lock-key" onclick="lockKey('3')">3</button>
+                <button class="lock-key" onclick="lockKey('4')">4</button>
+                <button class="lock-key" onclick="lockKey('5')">5</button>
+                <button class="lock-key" onclick="lockKey('6')">6</button>
+                <button class="lock-key" onclick="lockKey('7')">7</button>
+                <button class="lock-key" onclick="lockKey('8')">8</button>
+                <button class="lock-key" onclick="lockKey('9')">9</button>
+                <button class="lock-key" onclick="lockKey('0')">0</button>
+                <button class="lock-key" style="visibility:hidden"></button>
+                <button class="lock-key" onclick="lockDel()">⌫</button>
+            </div>
+            <div class="lock-error-msg" id="lock-error"></div>
+        </div>
+    </div>
+
+    <!-- ══ ONBOARDING ════════════════════════════════ -->
+    <div id="onboarding" class="hidden">
+        <div class="ob-bg"></div>
+        <div class="ob-content">
+            <div class="ob-logo">📦</div>
+            <div class="ob-title">StockPro</div>
+            <div class="ob-subtitle">نظام إدارة المخازن والمبيعات الذكي</div>
+
+            <div class="ob-form">
+                <div class="form-group">
+                    <label class="form-label">اسم الشركة / المتجر *</label>
+                    <input type="text" id="ob-company" class="form-input" placeholder="مثال: شركة النور للتوريدات"
+                        oninput="obValidate()">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">رقم الهاتف</label>
+                    <input type="tel" id="ob-phone" class="form-input" placeholder="01012345678">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">العنوان</label>
+                    <input type="text" id="ob-address" class="form-input" placeholder="القاهرة - مصر">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">العملة</label>
+                        <select id="ob-currency" class="form-select">
+                            <option value="EGP" data-sym="ج.م">جنيه مصري — ج.م</option>
+                            <option value="SAR" data-sym="ر.س">ريال سعودي — ر.س</option>
+                            <option value="AED" data-sym="د.إ">درهم إماراتي — د.إ</option>
+                            <option value="USD" data-sym="$">دولار أمريكي — $</option>
+                            <option value="EUR" data-sym="€">يورو — €</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">نسبة الضريبة %</label>
+                        <input type="number" id="ob-tax" class="form-input" value="14" min="0" max="100">
+                    </div>
+                </div>
+                <button class="ob-btn" id="ob-start" onclick="finishOnboarding()" disabled>
+                    🚀 ابدأ الآن
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ══ MAIN APP ══════════════════════════════════ -->
+    <div id="app" class="hidden">
+
+        <!-- ── Sidebar ── -->
+        <nav id="sidebar">
+            <div class="sidebar-brand">
+                <div class="brand-icon">📦</div>
+                <div class="brand-text">
+                    <div class="brand-name" id="brand-name">StockPro</div>
+                    <div class="brand-sub">إدارة المخازن والمبيعات</div>
+                </div>
+            </div>
+
+            <div class="sidebar-nav">
+                <div class="nav-item active" onclick="navigate('dashboard')" data-nav="dashboard">
+                    <span class="nav-icon">📊</span>
+                    <span>لوحة التحكم</span>
+                </div>
+                <div class="nav-item" onclick="navigate('inventory')" data-nav="inventory">
+                    <span class="nav-icon">📦</span>
+                    <span>المخزون</span>
+                    <span class="nav-badge hidden" id="low-stock-badge">0</span>
+                </div>
+                <div class="nav-item" onclick="navigate('sales')" data-nav="sales">
+                    <span class="nav-icon">🧾</span>
+                    <span>المبيعات</span>
+                </div>
+                <div class="nav-item" onclick="navigate('purchases')" data-nav="purchases">
+                    <span class="nav-icon">🛒</span>
+                    <span>المشتريات</span>
+                </div>
+                <div class="nav-item" onclick="navigate('customers')" data-nav="customers">
+                    <span class="nav-icon">👥</span>
+                    <span>العملاء</span>
+                </div>
+                <div class="nav-item" onclick="navigate('suppliers')" data-nav="suppliers">
+                    <span class="nav-icon">🏭</span>
+                    <span>الموردين</span>
+                </div>
+                <div class="nav-item" onclick="navigate('returns')" data-nav="returns">
+                    <span class="nav-icon">🔄</span>
+                    <span>المرتجعات</span>
+                </div>
+                <div class="nav-item" onclick="navigate('damaged')" data-nav="damaged">
+                    <span class="nav-icon">💔</span>
+                    <span>التالف</span>
+                </div>
+                <div class="nav-item" onclick="navigate('reports')" data-nav="reports">
+                    <span class="nav-icon">📈</span>
+                    <span>التقارير</span>
+                </div>
+                <div class="nav-item" onclick="navigate('expenses')" data-nav="expenses">
+                    <span class="nav-icon">💸</span>
+                    <span>المصاريف</span>
+                </div>
+                <div class="nav-item" onclick="navigate('settings')" data-nav="settings">
+                    <span class="nav-icon">⚙️</span>
+                    <span>الإعدادات</span>
+                </div>
+            </div>
+
+            <div class="sidebar-footer">
+                <div class="footer-role" id="footer-role">👤 مدير النظام</div>
+            </div>
+        </nav>
+
+        <!-- ── Main Area ── -->
+        <div id="main">
+            <header id="header">
+                <div class="header-title" id="header-title">لوحة التحكم</div>
+                <div class="header-actions">
+                    <span class="admin-login-user-badge" id="sp-logged-admin">👤 —</span>
+                    <button class="header-btn" onclick="spAdminLogout()" title="تسجيل خروج" style="color:#f87171">
+                        🚪
+                    </button>
+                    <button class="header-btn" onclick="window.open('admin.html','_blank')" title="لوحة الأدمن"
+                        style="background:rgba(139,92,246,.15);color:#8b5cf6">
+                        🛡️
+                    </button>
+                    <button class="header-btn" id="btn-deactivate-serial" onclick="deactivateSerial()"
+                        title="تغيير الترخيص" style="display:none;background:rgba(251,146,60,.15);color:#fb923c">
+                        🔑
+                    </button>
+                    <button class="header-btn" onclick="toggleTheme()" title="تبديل المظهر">
+                        🌓
+                    </button>
+                    <button class="header-btn" onclick="showNotifications()" title="التنبيهات" id="notif-btn">
+                        🔔
+                        <span class="notif-dot hidden" id="notif-dot"></span>
+                    </button>
+                    <button class="header-btn" onclick="lockApp()" title="قفل">
+                        🔒
+                    </button>
+                </div>
+            </header>
+
+            <div id="content">
+                <!-- Dynamic content rendered here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- ══ TOAST CONTAINER ═══════════════════════════ -->
+    <div id="toast-container"></div>
+
+    <!-- ══ MODAL CONTAINER ═══════════════════════════ -->
+    <div id="modal-root"></div>
+
+    <!-- ══ PRINT INVOICE (hidden) ════════════════════ -->
+    <div class="print-invoice" id="print-invoice"></div>
+
+    <script src="stockpro-data.js?v=3"></script>
+    <script src="stockpro.js?v=3"></script>
+    <script>
+        // PWA Service Worker Registration
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js').catch(err => console.log('SW:', err));
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,6 @@
+node_modules/
+stockpro.db
+stockpro.db-shm
+stockpro.db-wal
+.env
+*.log

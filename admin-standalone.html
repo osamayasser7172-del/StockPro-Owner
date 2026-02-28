@@ -1,0 +1,2289 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StockPro — لوحة الأدمن</title>
+<style>
+/* ══════════════════════════════════════════════════
+   StockPro Admin Panel — admin.css
+   Premium Dark Theme — Purple Accent
+   ══════════════════════════════════════════════════ */
+
+:root {
+    --bg-body: #0c0a1a;
+    --bg-sidebar: #110e22;
+    --bg-card: #171430;
+    --bg-surface: #1c1838;
+    --bg-hover: #231f45;
+    --bg-input: #1c1838;
+    --border: #2e2960;
+    --text-primary: #edebff;
+    --text-secondary: #a8a3cc;
+    --text-muted: #6b65a0;
+    --accent: #8b5cf6;
+    --accent-light: rgba(139, 92, 246, 0.12);
+    --accent-glow: rgba(139, 92, 246, 0.35);
+    --green: #34d399;
+    --green-light: rgba(52, 211, 153, 0.12);
+    --red: #f87171;
+    --red-light: rgba(248, 113, 113, 0.12);
+    --yellow: #fbbf24;
+    --yellow-light: rgba(251, 191, 36, 0.12);
+    --blue: #60a5fa;
+    --blue-light: rgba(96, 165, 250, 0.12);
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --shadow-sm: 0 2px 8px rgba(0, 0, 0, .3);
+    --shadow-md: 0 4px 16px rgba(0, 0, 0, .4);
+    --transition: .2s ease;
+    --sidebar-w: 240px;
+    --header-h: 60px;
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    font-size: 14px;
+}
+
+body {
+    font-family: 'Cairo', 'Segoe UI', sans-serif;
+    background: var(--bg-body);
+    color: var(--text-primary);
+    direction: rtl;
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+/* ══ LOGIN ══════════════════════════════════════ */
+.login-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: linear-gradient(135deg, #0c0a1a 0%, #1e1145 50%, #0c0a1a 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.login-box {
+    width: 380px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 40px 32px;
+    text-align: center;
+    box-shadow: 0 20px 60px rgba(139, 92, 246, 0.15);
+}
+
+.login-logo {
+    font-size: 48px;
+    margin-bottom: 8px;
+}
+
+.login-title {
+    font-size: 22px;
+    font-weight: 800;
+    margin-bottom: 4px;
+}
+
+.login-sub {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-bottom: 24px;
+}
+
+.login-box .form-group {
+    margin-bottom: 14px;
+    text-align: right;
+}
+
+.login-box .form-label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: 6px;
+}
+
+.login-box .form-input,
+.login-box .form-select {
+    width: 100%;
+    padding: 12px 14px;
+    background: var(--bg-input);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--text-primary);
+    font-size: 13px;
+    font-family: inherit;
+    transition: border var(--transition);
+}
+
+.login-box .form-input:focus,
+.login-box .form-select:focus {
+    outline: none;
+    border-color: var(--accent);
+}
+
+.login-btn {
+    width: 100%;
+    padding: 14px;
+    margin-top: 8px;
+    background: linear-gradient(135deg, var(--accent), #6d28d9);
+    color: white;
+    border: none;
+    border-radius: var(--radius-md);
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all var(--transition);
+    box-shadow: 0 4px 16px var(--accent-glow);
+}
+
+.login-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 24px var(--accent-glow);
+}
+
+/* ══ LAYOUT ══════════════════════════════════════ */
+.admin-app {
+    display: flex;
+    min-height: 100vh;
+}
+
+.admin-sidebar {
+    width: var(--sidebar-w);
+    background: var(--bg-sidebar);
+    border-left: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 100;
+}
+
+.sidebar-brand {
+    padding: 20px 16px;
+    border-bottom: 1px solid var(--border);
+    text-align: center;
+}
+
+.sidebar-brand-icon {
+    font-size: 32px;
+}
+
+.sidebar-brand-name {
+    font-size: 15px;
+    font-weight: 800;
+    margin-top: 4px;
+    color: var(--accent);
+}
+
+.sidebar-brand-sub {
+    font-size: 10px;
+    color: var(--text-muted);
+}
+
+.sidebar-nav {
+    flex: 1;
+    padding: 12px 8px;
+    overflow-y: auto;
+}
+
+.admin-nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    margin-bottom: 2px;
+    border-radius: var(--radius-sm);
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all var(--transition);
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.admin-nav-item:hover {
+    background: var(--bg-hover);
+    color: var(--text-primary);
+}
+
+.admin-nav-item.active {
+    background: var(--accent-light);
+    color: var(--accent);
+    font-weight: 700;
+    border-right: 3px solid var(--accent);
+}
+
+.admin-nav-icon {
+    font-size: 18px;
+    width: 24px;
+    text-align: center;
+}
+
+.sidebar-footer {
+    padding: 12px 16px;
+    border-top: 1px solid var(--border);
+    font-size: 11px;
+    color: var(--text-muted);
+    text-align: center;
+}
+
+.admin-main {
+    flex: 1;
+    margin-right: var(--sidebar-w);
+}
+
+.admin-header {
+    height: var(--header-h);
+    padding: 0 24px;
+    background: var(--bg-sidebar);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+}
+
+.admin-header-title {
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.admin-header-user {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 12px;
+    color: var(--text-secondary);
+}
+
+.admin-header-role {
+    padding: 4px 10px;
+    border-radius: 20px;
+    background: var(--accent-light);
+    color: var(--accent);
+    font-size: 10px;
+    font-weight: 700;
+}
+
+.admin-content {
+    padding: 20px 24px;
+}
+
+/* ══ STAT CARDS ══════════════════════════════════ */
+.admin-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.admin-stat {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    transition: all var(--transition);
+}
+
+.admin-stat:hover {
+    border-color: var(--accent);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.admin-stat-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+}
+
+.admin-stat-icon.purple {
+    background: var(--accent-light);
+}
+
+.admin-stat-icon.green {
+    background: var(--green-light);
+}
+
+.admin-stat-icon.red {
+    background: var(--red-light);
+}
+
+.admin-stat-icon.blue {
+    background: var(--blue-light);
+}
+
+.admin-stat-icon.yellow {
+    background: var(--yellow-light);
+}
+
+.admin-stat-value {
+    font-size: 24px;
+    font-weight: 800;
+}
+
+.admin-stat-label {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 2px;
+}
+
+/* ══ TABLE ══════════════════════════════════════ */
+.admin-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+}
+
+.admin-search {
+    flex: 1;
+    max-width: 360px;
+    padding: 10px 14px;
+    background: var(--bg-input);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--text-primary);
+    font-size: 13px;
+    font-family: inherit;
+}
+
+.admin-search:focus {
+    outline: none;
+    border-color: var(--accent);
+}
+
+.admin-table-wrap {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+}
+
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.admin-table th {
+    padding: 12px 16px;
+    text-align: right;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    background: var(--bg-surface);
+    border-bottom: 1px solid var(--border);
+}
+
+.admin-table td {
+    padding: 12px 16px;
+    text-align: right;
+    font-size: 13px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+}
+
+.admin-table tbody tr {
+    transition: background var(--transition);
+}
+
+.admin-table tbody tr:hover {
+    background: var(--bg-hover);
+}
+
+.admin-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* ══ BADGES ══════════════════════════════════════ */
+.badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.badge-green {
+    background: var(--green-light);
+    color: var(--green);
+}
+
+.badge-red {
+    background: var(--red-light);
+    color: var(--red);
+}
+
+.badge-yellow {
+    background: var(--yellow-light);
+    color: var(--yellow);
+}
+
+.badge-blue {
+    background: var(--blue-light);
+    color: var(--blue);
+}
+
+.badge-purple {
+    background: var(--accent-light);
+    color: var(--accent);
+}
+
+/* ══ BUTTONS ══════════════════════════════════════ */
+.btn {
+    padding: 8px 18px;
+    border-radius: var(--radius-sm);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    font-family: inherit;
+    transition: all var(--transition);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.btn-primary {
+    background: var(--accent);
+    color: white;
+}
+
+.btn-primary:hover {
+    background: #7c3aed;
+}
+
+.btn-danger {
+    background: var(--red);
+    color: white;
+}
+
+.btn-danger:hover {
+    opacity: 0.85;
+}
+
+.btn-ghost {
+    background: transparent;
+    color: var(--text-secondary);
+    border: 1px solid var(--border);
+}
+
+.btn-ghost:hover {
+    background: var(--bg-hover);
+    color: var(--text-primary);
+}
+
+.btn-sm {
+    padding: 5px 12px;
+    font-size: 11px;
+}
+
+/* ══ ACTION ROW ══════════════════════════════════ */
+.action-row {
+    display: flex;
+    gap: 4px;
+}
+
+.action-btn {
+    width: 30px;
+    height: 30px;
+    border-radius: 6px;
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 13px;
+    transition: all var(--transition);
+}
+
+.action-btn:hover {
+    background: var(--accent-light);
+    border-color: var(--accent);
+}
+
+.action-btn.del:hover {
+    background: var(--red-light);
+    border-color: var(--red);
+}
+
+/* ══ MODAL ══════════════════════════════════════ */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9000;
+    background: rgba(0, 0, 0, .6);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .2s;
+}
+
+.modal-overlay.show {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.modal-box {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    width: 520px;
+    max-width: 95vw;
+    max-height: 85vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, .5);
+}
+
+.modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border);
+}
+
+.modal-title {
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.modal-close {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    cursor: pointer;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-close:hover {
+    background: var(--red-light);
+    color: var(--red);
+    border-color: var(--red);
+}
+
+.modal-body {
+    padding: 20px;
+}
+
+.modal-footer {
+    padding: 16px 20px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    gap: 8px;
+    justify-content: flex-start;
+}
+
+/* ══ FORMS ══════════════════════════════════════ */
+.form-group {
+    margin-bottom: 14px;
+}
+
+.form-label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: 6px;
+}
+
+.form-input,
+.form-select {
+    width: 100%;
+    padding: 10px 14px;
+    background: var(--bg-input);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--text-primary);
+    font-size: 13px;
+    font-family: inherit;
+}
+
+.form-input:focus,
+.form-select:focus {
+    outline: none;
+    border-color: var(--accent);
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.form-row-3 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 12px;
+}
+
+/* ══ TOGGLE SWITCH ══════════════════════════════ */
+.toggle-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+}
+
+.toggle-wrap:last-child {
+    border-bottom: none;
+}
+
+.toggle-label {
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.toggle {
+    width: 42px;
+    height: 24px;
+    border-radius: 12px;
+    background: var(--border);
+    position: relative;
+    cursor: pointer;
+    transition: background var(--transition);
+}
+
+.toggle.on {
+    background: var(--accent);
+}
+
+.toggle::after {
+    content: '';
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: white;
+    top: 3px;
+    right: 3px;
+    transition: transform var(--transition);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, .3);
+}
+
+.toggle.on::after {
+    transform: translateX(-18px);
+}
+
+/* ══ SECTION TITLE ══════════════════════════════ */
+.section-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-muted);
+    margin: 16px 0 8px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--border);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* ══ PROGRESS BAR ══════════════════════════════ */
+.progress-bar {
+    height: 6px;
+    background: var(--border);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    border-radius: 3px;
+    background: linear-gradient(90deg, var(--accent), #6d28d9);
+    transition: width .3s;
+}
+
+/* ══ EMPTY STATE ══════════════════════════════ */
+.empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--text-muted);
+}
+
+.empty-icon {
+    font-size: 48px;
+    margin-bottom: 8px;
+}
+
+.empty-title {
+    font-size: 16px;
+    font-weight: 600;
+}
+
+/* ══ TOAST ══════════════════════════════════════ */
+.toast-container {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 99999;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.toast {
+    padding: 12px 20px;
+    border-radius: var(--radius-sm);
+    background: var(--bg-card);
+    border: 1px solid var(--accent);
+    color: var(--text-primary);
+    font-size: 13px;
+    box-shadow: var(--shadow-md);
+    animation: toastIn .3s ease;
+}
+
+.toast.error {
+    border-color: var(--red);
+}
+
+@keyframes toastIn {
+    from {
+        opacity: 0;
+        transform: translateY(-12px);
+    }
+
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+/* ══ CLIENT DETAIL ══════════════════════════════ */
+.client-detail-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+.client-detail-card {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 16px;
+}
+
+.client-detail-card h4 {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--accent);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+/* ══ RBAC TABLE ══════════════════════════════════ */
+.rbac-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+}
+
+.rbac-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 20px;
+    transition: all var(--transition);
+}
+
+.rbac-card:hover {
+    border-color: var(--accent);
+}
+
+.rbac-role {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.rbac-desc {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-bottom: 12px;
+}
+
+.rbac-perm-list {
+    list-style: none;
+}
+
+.rbac-perm-list li {
+    padding: 4px 0;
+    font-size: 12px;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.rbac-check {
+    color: var(--green);
+}
+
+.rbac-cross {
+    color: var(--red);
+}
+</style>
+</head>
+
+<body>
+
+    <!-- Login -->
+    <div class="login-overlay" id="login-screen">
+        <div class="login-box">
+            <div class="login-logo">🛡️</div>
+            <div class="login-title">StockPro Admin</div>
+            <div class="login-sub">لوحة تحكم إدارة النظام</div>
+            <div class="form-group">
+                <label class="form-label">اسم المستخدم</label>
+                <input type="text" class="form-input" id="login-user" placeholder="admin">
+            </div>
+            <div class="form-group">
+                <label class="form-label">كلمة المرور</label>
+                <input type="password" class="form-input" id="login-pass" placeholder="••••••">
+            </div>
+            <div class="form-group">
+                <label class="form-label">🔑 مفتاح المالك (Master Key)</label>
+                <input type="password" class="form-input" id="login-master-key" placeholder="أدخل مفتاح المالك"
+                    onkeydown="if(event.key==='Enter') adminLogin()" style="border-color:rgba(251,146,60,0.3)">
+                <div style="font-size:10px;color:#94a3b8;margin-top:4px">⚠️ هذا المفتاح متاح فقط لمالك البرنامج</div>
+            </div>
+            <button class="login-btn" onclick="adminLogin()">🔓 تسجيل الدخول</button>
+        </div>
+    </div>
+
+    <!-- App -->
+    <div class="admin-app" id="admin-app" style="display:none">
+        <aside class="admin-sidebar">
+            <div class="sidebar-brand">
+                <div class="sidebar-brand-icon">🛡️</div>
+                <div class="sidebar-brand-name">StockPro Admin</div>
+                <div class="sidebar-brand-sub">لوحة إدارة النظام</div>
+            </div>
+            <nav class="sidebar-nav">
+                <div class="admin-nav-item active" data-nav="dashboard" onclick="adminNav('dashboard')">
+                    <span class="admin-nav-icon">📊</span> لوحة التحكم
+                </div>
+                <div class="admin-nav-item" data-nav="clients" onclick="adminNav('clients')">
+                    <span class="admin-nav-icon">👥</span> العملاء
+                </div>
+                <div class="admin-nav-item" data-nav="devices" onclick="adminNav('devices')">
+                    <span class="admin-nav-icon">💻</span> الأجهزة
+                </div>
+                <div class="admin-nav-item" data-nav="licenses" onclick="adminNav('licenses')">
+                    <span class="admin-nav-icon">📜</span> التراخيص
+                </div>
+                <div class="admin-nav-item" data-nav="permissions" onclick="adminNav('permissions')">
+                    <span class="admin-nav-icon">🔐</span> الصلاحيات
+                </div>
+            </nav>
+            <div class="sidebar-footer">
+                <div id="sidebar-user-info"></div>
+                <button class="btn btn-ghost btn-sm" onclick="adminLogout()" style="margin-top:8px;width:100%">🚪 تسجيل
+                    خروج</button>
+            </div>
+        </aside>
+
+        <div class="admin-main">
+            <header class="admin-header">
+                <div class="admin-header-title" id="admin-title">لوحة التحكم</div>
+                <div class="admin-header-user">
+                    <span id="admin-user-name"></span>
+                    <span class="admin-header-role" id="admin-user-role"></span>
+                </div>
+            </header>
+            <div class="admin-content" id="admin-content"></div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="admin-modal" onclick="if(event.target===this)closeAdminModal()">
+        <div class="modal-box" id="admin-modal-box"></div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast-container" id="admin-toast"></div>
+
+<script>
+// ── Encryption Layer ─────────────────────────────
+const _SP_EK = 'StockPr0_2026!sEcReT_kEy#x9Zq';
+
+function spEncrypt(data, key) {
+    try {
+        const json = typeof data === 'string' ? data : JSON.stringify(data);
+        const k = key || _SP_EK;
+        let enc = '';
+        for (let i = 0; i < json.length; i++) {
+            enc += String.fromCharCode(json.charCodeAt(i) ^ k.charCodeAt(i % k.length));
+        }
+        return btoa(unescape(encodeURIComponent(enc)));
+    } catch (e) { return ''; }
+}
+
+function spDecrypt(encoded, key) {
+    try {
+        const k = key || _SP_EK;
+        const enc = decodeURIComponent(escape(atob(encoded)));
+        let dec = '';
+        for (let i = 0; i < enc.length; i++) {
+            dec += String.fromCharCode(enc.charCodeAt(i) ^ k.charCodeAt(i % k.length));
+        }
+        return JSON.parse(dec);
+    } catch (e) { return null; }
+}
+
+function spSetEncrypted(storageKey, data) {
+    localStorage.setItem(storageKey, spEncrypt(data));
+}
+
+function spGetEncrypted(storageKey) {
+    const raw = localStorage.getItem(storageKey);
+    if (!raw) return null;
+    // Try encrypted first, fallback to plain JSON (migration)
+    const dec = spDecrypt(raw);
+    if (dec !== null) return dec;
+    try { const plain = JSON.parse(raw); spSetEncrypted(storageKey, plain); return plain; } catch (e) { return null; }
+}
+
+// ── Serial / License Management ──────────────────
+const SP_SERIAL_KEY = 'sp_active_serial';
+const SP_SERIAL_CLIENT = 'sp_active_client';
+
+function getActiveSerial() {
+    return localStorage.getItem(SP_SERIAL_KEY) || '';
+}
+
+// ── Master Serial ──
+const MASTER_SERIAL = 'SP-MSTR-OWNR-2024-SPRO';
+
+function getActiveClient() {
+    try { return JSON.parse(localStorage.getItem(SP_SERIAL_CLIENT)) || null; }
+    catch (e) { return null; }
+}
+
+function setActiveSerial(serial, clientInfo) {
+    localStorage.setItem(SP_SERIAL_KEY, serial);
+    if (clientInfo) localStorage.setItem(SP_SERIAL_CLIENT, JSON.stringify(clientInfo));
+}
+
+function clearActiveSerial() {
+    localStorage.removeItem(SP_SERIAL_KEY);
+    localStorage.removeItem(SP_SERIAL_CLIENT);
+}
+
+// ── Self-Validating License Key Algorithm (same as admin.js) ──
+const SP_SECRET = 'SPRO2024XK';
+const SP_CHARS = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
+const SP_PLAN_FROM_CODE = { B: 'basic', P: 'premium', E: 'enterprise' };
+
+function spHash(str) {
+    let h = 5381;
+    for (let i = 0; i < str.length; i++) h = ((h << 5) + h + str.charCodeAt(i)) & 0x7FFFFFFF;
+    return h;
+}
+function spChecksum(g1, g2, g3) {
+    const h = spHash(g1 + g2 + g3 + SP_SECRET);
+    let out = '';
+    for (let i = 0; i < 4; i++) out += SP_CHARS[(h >> (i * 5)) % SP_CHARS.length];
+    return out;
+}
+function spValidateKey(serial) {
+    if (!serial || !serial.startsWith('SP-')) return null;
+    const parts = serial.split('-');
+    if (parts.length !== 5) return null;
+    const [, g1, g2, g3, g4] = parts;
+    if (!g1 || !g2 || !g3 || !g4) return null;
+    if (g1.length !== 4 || g2.length !== 4 || g3.length !== 4 || g4.length !== 4) return null;
+    const expected = spChecksum(g1, g2, g3);
+    if (g4 !== expected) return null;
+    return SP_PLAN_FROM_CODE[g3[0]] || 'basic';
+}
+
+async function validateSerial(serial) {
+    // Master serial — owner access to all clients
+    if (serial === MASTER_SERIAL) {
+        const clients = JSON.parse(localStorage.getItem('spadmin_clients') || '[]');
+        const result = {
+            valid: true,
+            isMaster: true,
+            license: { licenseKey: MASTER_SERIAL, plan: 'enterprise', status: 'active' },
+            client: { id: 'master', name: 'مالك البرنامج', company: 'StockPro Owner' },
+            clients: clients.map(c => ({ id: c.id, name: c.name, company: c.company, licenseKey: c.licenseKey, plan: c.plan, status: c.status }))
+        };
+        localStorage.setItem('sp_cached_license', JSON.stringify({ serial, data: result, ts: Date.now() }));
+        return result;
+    }
+
+    // Self-validating key: check checksum algorithm
+    const plan = spValidateKey(serial);
+    if (plan) {
+        const result = {
+            valid: true,
+            isMaster: false,
+            license: { licenseKey: serial, plan: plan, status: 'active' },
+            client: { id: serial.replace(/[^A-Z0-9]/g, '').slice(-8), name: 'عميل', company: 'شركة' }
+        };
+        // Try to get client info from localStorage (if on same device as admin)
+        const licenses = JSON.parse(localStorage.getItem('spadmin_licenses') || '[]');
+        const storedLic = licenses.find(l => l.licenseKey === serial);
+        if (storedLic) {
+            if (storedLic.status !== 'active') return { valid: false, error: 'الترخيص موقوف' };
+            if (storedLic.endDate && new Date(storedLic.endDate) < new Date()) return { valid: false, error: 'الترخيص منتهي الصلاحية' };
+            result.license = storedLic;
+            const clients = JSON.parse(localStorage.getItem('spadmin_clients') || '[]');
+            const client = clients.find(c => c.id === storedLic.clientId);
+            if (client) result.client = client;
+        }
+        localStorage.setItem('sp_cached_license', JSON.stringify({ serial, data: result, ts: Date.now() }));
+        return result;
+    }
+
+    // Invalid checksum
+    return { valid: false, error: 'مفتاح الترخيص غير صالح' };
+}
+
+// ── Dynamic DB Key (per serial) ──────────────────
+function getDBKey() {
+    // Master mode: use the selected client's license key
+    const masterClientKey = localStorage.getItem('sp_master_client_key');
+    if (masterClientKey && localStorage.getItem('sp_is_master') === '1') {
+        const hash = masterClientKey.replace(/[^A-Z0-9]/g, '').slice(-8);
+        return 'spdb_' + hash;
+    }
+
+    const serial = getActiveSerial();
+    if (serial) {
+        // Create a short hash from serial for the key
+        const hash = serial.replace(/[^A-Z0-9]/g, '').slice(-8);
+        return 'spdb_' + hash;
+    }
+    return 'stockpro_db'; // fallback for legacy data
+}
+
+const DB_VERSION = 1;
+
+// ── Default Database Structure ───────────────────
+function defaultDB() {
+    return {
+        version: DB_VERSION,
+        settings: {
+            companyName: '',
+            phone: '',
+            address: '',
+            currency: 'EGP',
+            currencySymbol: 'ج.م',
+            taxRate: 14,
+            theme: 'dark',
+            lang: 'ar',
+            receiptFooter: 'شكراً لتعاملكم معنا',
+            pin: '',
+            onboarded: false,
+            invoiceCounter: 1000,
+            purchaseCounter: 5000,
+            roles: {
+                admin: { name: 'مدير', permissions: ['all'] },
+                cashier: { name: 'كاشير', permissions: ['pos', 'sales', 'customers'] },
+                viewer: { name: 'مشاهد', permissions: ['reports', 'inventory_view'] }
+            },
+            activeRole: 'admin'
+        },
+        warehouses: [],
+        categories: [],
+        products: [],
+        customers: [],
+        suppliers: [],
+        sales: [],
+        purchases: [],
+        returns: [],
+        stockMovements: [],
+        expenses: [],
+        users: []
+    };
+}
+
+// ── localStorage Helpers ─────────────────────────
+function loadDB() {
+    try {
+        const raw = localStorage.getItem(getDBKey());
+        if (!raw) return defaultDB();
+        const db = JSON.parse(raw);
+        if (db.version !== DB_VERSION) {
+            return migrateDB(db);
+        }
+        return db;
+    } catch (e) {
+        console.error('DB load error:', e);
+        return defaultDB();
+    }
+}
+
+function saveDB(db) {
+    try {
+        localStorage.setItem(getDBKey(), JSON.stringify(db));
+    } catch (e) {
+        console.error('DB save error:', e);
+    }
+}
+
+function migrateDB(db) {
+    // Future migration logic
+    db.version = DB_VERSION;
+    saveDB(db);
+    return db;
+}
+
+function resetDB() {
+    localStorage.removeItem(getDBKey());
+    return defaultDB();
+}
+
+// ── CRUD Helpers ─────────────────────────────────
+function generateId() {
+    return Date.now().toString(36) + Math.random().toString(36).substr(2, 6);
+}
+
+function addRecord(collection, record) {
+    const db = loadDB();
+    record.id = generateId();
+    record.createdAt = new Date().toISOString();
+    record.updatedAt = new Date().toISOString();
+    db[collection].push(record);
+    saveDB(db);
+    return record;
+}
+
+function updateRecord(collection, id, updates) {
+    const db = loadDB();
+    const idx = db[collection].findIndex(r => r.id === id);
+    if (idx === -1) return null;
+    updates.updatedAt = new Date().toISOString();
+    db[collection][idx] = { ...db[collection][idx], ...updates };
+    saveDB(db);
+    return db[collection][idx];
+}
+
+function deleteRecord(collection, id) {
+    const db = loadDB();
+    db[collection] = db[collection].filter(r => r.id !== id);
+    saveDB(db);
+}
+
+function getRecord(collection, id) {
+    const db = loadDB();
+    return db[collection].find(r => r.id === id) || null;
+}
+
+function getAllRecords(collection) {
+    const db = loadDB();
+    return db[collection] || [];
+}
+
+function getSettings() {
+    return loadDB().settings;
+}
+
+function updateSettings(updates) {
+    const db = loadDB();
+    db.settings = { ...db.settings, ...updates };
+    saveDB(db);
+    return db.settings;
+}
+
+function getNextInvoiceNumber() {
+    const db = loadDB();
+    const num = db.settings.invoiceCounter + 1;
+    db.settings.invoiceCounter = num;
+    saveDB(db);
+    return 'INV-' + num;
+}
+
+function getNextPurchaseNumber() {
+    const db = loadDB();
+    const num = db.settings.purchaseCounter + 1;
+    db.settings.purchaseCounter = num;
+    saveDB(db);
+    return 'PO-' + num;
+}
+
+// ── Stock Helpers ────────────────────────────────
+function adjustStock(productId, warehouseId, qty, type, refId) {
+    const db = loadDB();
+    const product = db.products.find(p => p.id === productId);
+    if (!product) return;
+
+    // Update product stock
+    if (!product.stock) product.stock = {};
+    if (!product.stock[warehouseId]) product.stock[warehouseId] = 0;
+    product.stock[warehouseId] += qty;
+    product.updatedAt = new Date().toISOString();
+
+    // Log movement
+    db.stockMovements.push({
+        id: generateId(),
+        productId,
+        warehouseId,
+        qty,
+        type, // 'in', 'out', 'transfer', 'adjustment'
+        refId,
+        date: new Date().toISOString()
+    });
+
+    saveDB(db);
+}
+
+function getTotalStock(productId) {
+    const db = loadDB();
+    const product = db.products.find(p => p.id === productId);
+    if (!product || !product.stock) return 0;
+    return Object.values(product.stock).reduce((sum, v) => sum + v, 0);
+}
+
+function getLowStockProducts() {
+    const db = loadDB();
+    return db.products.filter(p => {
+        const total = p.stock ? Object.values(p.stock).reduce((s, v) => s + v, 0) : 0;
+        return p.minStock && total <= p.minStock;
+    });
+}
+
+// ── Report Helpers ───────────────────────────────
+function getSalesByPeriod(period) {
+    const db = loadDB();
+    const now = new Date();
+    let start;
+
+    switch (period) {
+        case 'today':
+            start = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+            break;
+        case 'week':
+            start = new Date(now.getTime() - 7 * 86400000);
+            break;
+        case 'month':
+            start = new Date(now.getFullYear(), now.getMonth(), 1);
+            break;
+        case 'year':
+            start = new Date(now.getFullYear(), 0, 1);
+            break;
+        default:
+            start = new Date(0);
+    }
+
+    return db.sales.filter(s => new Date(s.date) >= start);
+}
+
+function getProfitByProduct() {
+    const db = loadDB();
+    const profits = {};
+    db.sales.forEach(sale => {
+        (sale.items || []).forEach(item => {
+            if (!profits[item.productId]) {
+                const p = db.products.find(pr => pr.id === item.productId);
+                profits[item.productId] = {
+                    name: p ? p.name : 'محذوف',
+                    revenue: 0,
+                    cost: 0,
+                    qty: 0
+                };
+            }
+            profits[item.productId].revenue += item.price * item.qty;
+            profits[item.productId].cost += (item.costPrice || 0) * item.qty;
+            profits[item.productId].qty += item.qty;
+        });
+    });
+
+    return Object.entries(profits).map(([id, data]) => ({
+        productId: id,
+        ...data,
+        profit: data.revenue - data.cost
+    })).sort((a, b) => b.profit - a.profit);
+}
+
+function getTopCustomers(limit = 10) {
+    const db = loadDB();
+    const spending = {};
+    db.sales.forEach(sale => {
+        if (sale.customerId) {
+            if (!spending[sale.customerId]) spending[sale.customerId] = 0;
+            spending[sale.customerId] += sale.total || 0;
+        }
+    });
+
+    return Object.entries(spending)
+        .map(([id, total]) => {
+            const c = db.customers.find(cu => cu.id === id);
+            return { customerId: id, name: c ? c.name : 'محذوف', total };
+        })
+        .sort((a, b) => b.total - a.total)
+        .slice(0, limit);
+}
+
+function getDailySales(days = 30) {
+    const db = loadDB();
+    const result = [];
+    const now = new Date();
+
+    for (let i = days - 1; i >= 0; i--) {
+        const d = new Date(now.getTime() - i * 86400000);
+        const dayStr = d.toISOString().split('T')[0];
+        const daySales = db.sales.filter(s => s.date && s.date.startsWith(dayStr));
+        result.push({
+            date: dayStr,
+            total: daySales.reduce((sum, s) => sum + (s.total || 0), 0),
+            count: daySales.length
+        });
+    }
+    return result;
+}
+
+// ── Export Helpers ────────────────────────────────
+function exportToCSV(data, filename) {
+    if (!data.length) return;
+    const headers = Object.keys(data[0]);
+    const csv = [
+        headers.join(','),
+        ...data.map(row => headers.map(h => {
+            let val = row[h];
+            if (typeof val === 'string') val = '"' + val.replace(/"/g, '""') + '"';
+            if (typeof val === 'object') val = '"' + JSON.stringify(val).replace(/"/g, '""') + '"';
+            return val;
+        }).join(','))
+    ].join('\n');
+
+    const BOM = '\uFEFF';
+    const blob = new Blob([BOM + csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename + '.csv';
+    a.click();
+    URL.revokeObjectURL(url);
+}
+
+function exportDBBackup() {
+    const db = loadDB();
+    const blob = new Blob([JSON.stringify(db, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'stockpro_backup_' + new Date().toISOString().split('T')[0] + '.json';
+    a.click();
+    URL.revokeObjectURL(url);
+}
+
+function importDBBackup(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            try {
+                const db = JSON.parse(e.target.result);
+                if (db.version) {
+                    saveDB(db);
+                    resolve(true);
+                } else {
+                    reject('ملف غير صالح');
+                }
+            } catch (err) {
+                reject('خطأ في قراءة الملف');
+            }
+        };
+        reader.readAsText(file);
+    });
+}
+
+// ── WhatsApp Invoice Share ───────────────────────
+function shareInvoiceWhatsApp(sale, phone) {
+    const settings = getSettings();
+    let text = `*فاتورة ${sale.invoiceNumber}*\n`;
+    text += `${settings.companyName}\n`;
+    text += `التاريخ: ${new Date(sale.date).toLocaleDateString('ar-EG')}\n`;
+    text += `───────────\n`;
+    (sale.items || []).forEach(item => {
+        text += `${item.name} × ${item.qty} = ${(item.price * item.qty).toFixed(2)} ${settings.currencySymbol}\n`;
+    });
+    text += `───────────\n`;
+    if (sale.discount) text += `خصم: ${sale.discount.toFixed(2)} ${settings.currencySymbol}\n`;
+    if (sale.tax) text += `ضريبة: ${sale.tax.toFixed(2)} ${settings.currencySymbol}\n`;
+    text += `*الإجمالي: ${sale.total.toFixed(2)} ${settings.currencySymbol}*\n`;
+    text += `\n${settings.receiptFooter}`;
+
+    const cleanPhone = phone.replace(/[^0-9]/g, '');
+    window.open(`https://wa.me/${cleanPhone}?text=${encodeURIComponent(text)}`, '_blank');
+}
+
+// ── Seed Sample Data ─────────────────────────────
+function seedSampleData() {
+    const db = loadDB();
+
+    // Warehouses
+    db.warehouses = [
+        { id: 'wh1', name: 'المخزن الرئيسي', location: 'القاهرة', createdAt: new Date().toISOString() },
+        { id: 'wh2', name: 'مخزن الفرع', location: 'الجيزة', createdAt: new Date().toISOString() }
+    ];
+
+    // Categories
+    db.categories = [
+        { id: 'cat1', name: 'بقالة', icon: '🛒', color: '#22c55e' },
+        { id: 'cat2', name: 'أجهزة كهربائية', icon: '⚡', color: '#3b82f6' },
+        { id: 'cat3', name: 'ملابس', icon: '👕', color: '#a855f7' },
+        { id: 'cat4', name: 'مستلزمات مكتبية', icon: '📎', color: '#f59e0b' },
+        { id: 'cat5', name: 'مواد تنظيف', icon: '🧹', color: '#06b6d4' }
+    ];
+
+    // Products
+    db.products = [
+        { id: 'p1', name: 'أرز بسمتي 1 كجم', code: 'RIC001', barcode: '6221234560001', categoryId: 'cat1', unit: 'كجم', costPrice: 35, retailPrice: 45, wholesalePrice: 40, minStock: 20, stock: { wh1: 150, wh2: 50 }, image: '', createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
+        { id: 'p2', name: 'سكر أبيض 1 كجم', code: 'SUG001', barcode: '6221234560002', categoryId: 'cat1', unit: 'كجم', costPrice: 22, retailPrice: 30, wholesalePrice: 26, minStock: 30, stock: { wh1: 200, wh2: 80 }, image: '', createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
+        { id: 'p3', name: 'زيت عباد الشمس 1 لتر', code: 'OIL001', barcode: '6221234560003', categoryId: 'cat1', unit: 'لتر', costPrice: 55, retailPrice: 70, wholesalePrice: 62, minStock: 15, stock: { wh1: 100, wh2: 30 }, image: '', createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
+        { id: 'p4', name: 'شاي أحمر 250 جم', code: 'TEA001', barcode: '6221234560004', categoryId: 'cat1', unit: 'علبة', costPrice: 18, retailPrice: 25, wholesalePrice: 21, minStock: 25, stock: { wh1: 300, wh2: 100 }, image: '', createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
+        { id: 'p5', name: 'خلاط كهربائي', code: 'BLN001', barcode: '6221234560005', categoryId: 'cat2', unit: 'قطعة', costPrice: 450, retailPrice: 650, wholesalePrice: 550, minStock: 5, stock: { wh1: 25, wh2: 10 }, image: '', createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
+        { id: 'p6', name: 'مكواة بخار', code: 'IRN001', barcode: '6221234560006', categoryId: 'cat2', unit: 'قطعة', costPrice: 380, retailPrice: 520, wholesalePrice: 460, minStock: 3, stock: { wh1: 15, wh2: 8 }, image: '', createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
+        { id: 'p7', name: 'تيشيرت قطن', code: 'TSH001', barcode: '6221234560007', categoryId: 'cat3', unit: 'قطعة', costPrice: 80, retailPrice: 130, wholesalePrice: 100, minStock: 10, stock: { wh1: 60, wh2: 40 }, image: '', createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
+        { id: 'p8', name: 'بنطلون جينز', code: 'JNS001', barcode: '6221234560008', categoryId: 'cat3', unit: 'قطعة', costPrice: 180, retailPrice: 280, wholesalePrice: 230, minStock: 8, stock: { wh1: 40, wh2: 20 }, image: '', createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
+        { id: 'p9', name: 'أقلام حبر (عبوة 12)', code: 'PEN001', barcode: '6221234560009', categoryId: 'cat4', unit: 'عبوة', costPrice: 15, retailPrice: 25, wholesalePrice: 19, minStock: 20, stock: { wh1: 100, wh2: 50 }, image: '', createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
+        { id: 'p10', name: 'ورق A4 (رزمة 500)', code: 'PAP001', barcode: '6221234560010', categoryId: 'cat4', unit: 'رزمة', costPrice: 110, retailPrice: 150, wholesalePrice: 130, minStock: 10, stock: { wh1: 80, wh2: 30 }, image: '', createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
+        { id: 'p11', name: 'صابون سائل 1 لتر', code: 'SOP001', barcode: '6221234560011', categoryId: 'cat5', unit: 'زجاجة', costPrice: 20, retailPrice: 32, wholesalePrice: 26, minStock: 15, stock: { wh1: 120, wh2: 60 }, image: '', createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
+        { id: 'p12', name: 'معطر جو', code: 'AIR001', barcode: '6221234560012', categoryId: 'cat5', unit: 'علبة', costPrice: 35, retailPrice: 50, wholesalePrice: 42, minStock: 10, stock: { wh1: 80, wh2: 25 }, image: '', createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() }
+    ];
+
+    // Customers
+    db.customers = [
+        { id: 'c1', name: 'أحمد محمود', phone: '01012345678', email: 'ahmed@email.com', address: 'القاهرة - مدينة نصر', balance: 0, notes: 'عميل جملة', type: 'wholesale', createdAt: new Date().toISOString() },
+        { id: 'c2', name: 'محمد علي', phone: '01098765432', email: 'mohamed@email.com', address: 'الجيزة - الهرم', balance: 500, notes: '', type: 'retail', createdAt: new Date().toISOString() },
+        { id: 'c3', name: 'سارة حسن', phone: '01155566677', email: 'sara@email.com', address: 'الإسكندرية', balance: 0, notes: 'عميلة مميزة', type: 'wholesale', createdAt: new Date().toISOString() },
+        { id: 'c4', name: 'خالد إبراهيم', phone: '01234567890', email: '', address: 'المنصورة', balance: 1200, notes: 'عليه رصيد', type: 'retail', createdAt: new Date().toISOString() },
+        { id: 'c5', name: 'فاطمة عبدالله', phone: '01567891234', email: 'fatma@email.com', address: 'طنطا', balance: 0, notes: '', type: 'wholesale', createdAt: new Date().toISOString() }
+    ];
+
+    // Suppliers
+    db.suppliers = [
+        { id: 's1', name: 'شركة الأمل للتوريدات', phone: '0227654321', email: 'info@alamal.com', address: 'القاهرة - العباسية', balance: 0, notes: 'مورد بقالة رئيسي', createdAt: new Date().toISOString() },
+        { id: 's2', name: 'مصنع النور للأجهزة', phone: '0236543210', email: 'sales@alnour.com', address: 'العاشر من رمضان', balance: 3000, notes: 'أجهزة كهربائية', createdAt: new Date().toISOString() },
+        { id: 's3', name: 'توكيل الياسمين للملابس', phone: '0245678901', email: '', address: 'المحلة الكبرى', balance: 0, notes: '', createdAt: new Date().toISOString() }
+    ];
+
+    // Sample sales (last 30 days)
+    const now = new Date();
+    db.sales = [];
+    for (let i = 0; i < 45; i++) {
+        const daysAgo = Math.floor(Math.random() * 30);
+        const d = new Date(now.getTime() - daysAgo * 86400000);
+        const numItems = 1 + Math.floor(Math.random() * 4);
+        const items = [];
+        const usedProducts = new Set();
+
+        for (let j = 0; j < numItems; j++) {
+            const p = db.products[Math.floor(Math.random() * db.products.length)];
+            if (usedProducts.has(p.id)) continue;
+            usedProducts.add(p.id);
+            const qty = 1 + Math.floor(Math.random() * 5);
+            items.push({
+                productId: p.id,
+                name: p.name,
+                qty,
+                price: p.retailPrice,
+                costPrice: p.costPrice
+            });
+        }
+
+        const subtotal = items.reduce((s, it) => s + it.price * it.qty, 0);
+        const discount = Math.random() > 0.7 ? Math.round(subtotal * 0.05) : 0;
+        const taxRate = db.settings.taxRate / 100;
+        const tax = Math.round((subtotal - discount) * taxRate);
+        const total = subtotal - discount + tax;
+        const customer = Math.random() > 0.4 ? db.customers[Math.floor(Math.random() * db.customers.length)] : null;
+
+        db.sales.push({
+            id: generateId(),
+            invoiceNumber: 'INV-' + (1000 + i + 1),
+            date: d.toISOString(),
+            items,
+            subtotal,
+            discount,
+            tax,
+            total,
+            customerId: customer ? customer.id : null,
+            customerName: customer ? customer.name : 'عميل نقدي',
+            paymentMethod: Math.random() > 0.3 ? 'cash' : 'card',
+            warehouseId: Math.random() > 0.5 ? 'wh1' : 'wh2',
+            status: 'completed',
+            notes: '',
+            createdAt: d.toISOString()
+        });
+    }
+    db.settings.invoiceCounter = 1045;
+
+    // Sample purchases
+    db.purchases = [
+        {
+            id: generateId(), poNumber: 'PO-5001', date: new Date(now.getTime() - 15 * 86400000).toISOString(),
+            supplierId: 's1', supplierName: 'شركة الأمل للتوريدات',
+            items: [
+                { productId: 'p1', name: 'أرز بسمتي 1 كجم', qty: 100, price: 35 },
+                { productId: 'p2', name: 'سكر أبيض 1 كجم', qty: 150, price: 22 },
+                { productId: 'p4', name: 'شاي أحمر 250 جم', qty: 200, price: 18 }
+            ],
+            subtotal: 10400, tax: 1456, total: 11856, warehouseId: 'wh1',
+            status: 'received', notes: '', createdAt: new Date(now.getTime() - 15 * 86400000).toISOString()
+        },
+        {
+            id: generateId(), poNumber: 'PO-5002', date: new Date(now.getTime() - 5 * 86400000).toISOString(),
+            supplierId: 's2', supplierName: 'مصنع النور للأجهزة',
+            items: [
+                { productId: 'p5', name: 'خلاط كهربائي', qty: 10, price: 450 },
+                { productId: 'p6', name: 'مكواة بخار', qty: 8, price: 380 }
+            ],
+            subtotal: 7540, tax: 1055.6, total: 8595.6, warehouseId: 'wh1',
+            status: 'received', notes: '', createdAt: new Date(now.getTime() - 5 * 86400000).toISOString()
+        }
+    ];
+    db.settings.purchaseCounter = 5002;
+
+    saveDB(db);
+    return db;
+}
+
+</script>
+<script>
+// ═══════════════════════════════════════════════════
+//  StockPro Admin Panel — admin.js (Local Mode)
+// ═══════════════════════════════════════════════════
+
+const ADMIN = { screen: 'dashboard', user: null, cache: {} };
+const MASTER_KEY_HEADER = 'STOCKPRO-OWNER-2024';
+
+// ── Helpers ──
+function $(id) { return document.getElementById(id); }
+function fmt(n) { return Number(n || 0).toLocaleString('ar-EG', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' ج.م'; }
+function fmtDate(iso) { return iso ? new Date(iso).toLocaleDateString('ar-EG', { year: 'numeric', month: 'short', day: 'numeric' }) : '—'; }
+
+function adminToast(msg, type = 'success') {
+    const c = $('admin-toast');
+    const t = document.createElement('div');
+    t.className = 'toast' + (type === 'error' ? ' error' : '');
+    t.textContent = msg;
+    c.appendChild(t);
+    setTimeout(() => t.remove(), 3000);
+}
+
+// ── LocalDB Layer (replaces server API) ──
+function localDB(key) {
+    return JSON.parse(localStorage.getItem('spadmin_' + key) || '[]');
+}
+function localSave(key, data) {
+    localStorage.setItem('spadmin_' + key, JSON.stringify(data));
+}
+function genId() { return 'c_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
+
+// ── Self-Validating License Key Algorithm ──
+const SP_SECRET = 'SPRO2024XK';
+const SP_CHARS = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
+const SP_PLAN_CODE = { basic: 'B', premium: 'P', enterprise: 'E' };
+const SP_PLAN_FROM_CODE = { B: 'basic', P: 'premium', E: 'enterprise' };
+
+function spHash(str) {
+    let h = 5381;
+    for (let i = 0; i < str.length; i++) h = ((h << 5) + h + str.charCodeAt(i)) & 0x7FFFFFFF;
+    return h;
+}
+
+function spChecksum(g1, g2, g3) {
+    const h = spHash(g1 + g2 + g3 + SP_SECRET);
+    let out = '';
+    for (let i = 0; i < 4; i++) out += SP_CHARS[(h >> (i * 5)) % SP_CHARS.length];
+    return out;
+}
+
+function genLicenseKey(plan) {
+    plan = plan || 'basic';
+    const rnd = () => { let s = ''; for (let i = 0; i < 4; i++) s += SP_CHARS[Math.floor(Math.random() * SP_CHARS.length)]; return s; };
+    const g1 = rnd();
+    const g2 = rnd();
+    const planCode = SP_PLAN_CODE[plan] || 'B';
+    const g3 = planCode + rnd().slice(1); // First char = plan code
+    const g4 = spChecksum(g1, g2, g3);
+    return 'SP-' + g1 + '-' + g2 + '-' + g3 + '-' + g4;
+}
+
+function validateLicenseKey(serial) {
+    if (!serial || !serial.startsWith('SP-')) return null;
+    const parts = serial.split('-');
+    if (parts.length !== 5) return null;
+    const [, g1, g2, g3, g4] = parts;
+    if (!g1 || !g2 || !g3 || !g4) return null;
+    if (g1.length !== 4 || g2.length !== 4 || g3.length !== 4 || g4.length !== 4) return null;
+    const expected = spChecksum(g1, g2, g3);
+    if (g4 !== expected) return null;
+    const planCode = g3[0];
+    return SP_PLAN_FROM_CODE[planCode] || 'basic';
+}
+
+// ── Local API replacement — routes endpoints to localStorage ──
+async function api(endpoint, method = 'GET', body = null) {
+    // Dashboard
+    if (endpoint === '/api/admin/dashboard') {
+        const clients = localDB('clients');
+        const licenses = localDB('licenses');
+        const devices = localDB('devices');
+        return {
+            totalClients: clients.length,
+            activeClients: clients.filter(c => c.status === 'active').length,
+            expiredClients: clients.filter(c => c.status === 'expired').length,
+            totalDevices: devices.length,
+            onlineDevices: devices.filter(d => d.status === 'online').length,
+            activeLicenses: licenses.filter(l => l.status === 'active').length,
+            recentClients: clients.slice(-5).reverse(),
+            recentDevices: devices.slice(-5).reverse()
+        };
+    }
+
+    // Clients
+    if (endpoint === '/api/admin/clients' && method === 'GET') {
+        return localDB('clients').reverse();
+    }
+    if (endpoint === '/api/admin/clients' && method === 'POST') {
+        const clients = localDB('clients');
+        const id = genId();
+        const cl = { id, ...body, createdAt: new Date().toISOString() };
+        if (!cl.startDate) cl.startDate = new Date().toISOString();
+        if (!cl.endDate) { const d = new Date(); d.setDate(d.getDate() + 365); cl.endDate = d.toISOString(); }
+        if (!cl.status) cl.status = 'active';
+        if (!cl.plan) cl.plan = 'basic';
+        const licenseKey = genLicenseKey(cl.plan);
+        cl.licenseKey = licenseKey;
+        clients.push(cl);
+        localSave('clients', clients);
+        // Auto-create license
+        const licenses = localDB('licenses');
+        licenses.push({ id: 'l_' + Date.now(), clientId: id, licenseKey, plan: cl.plan, startDate: cl.startDate, endDate: cl.endDate, status: 'active', company: cl.company, clientName: cl.name });
+        localSave('licenses', licenses);
+        return cl;
+    }
+    if (endpoint.match(/\/api\/admin\/clients\/(.+)/) && method === 'PUT') {
+        const id = endpoint.split('/').pop();
+        const clients = localDB('clients');
+        const idx = clients.findIndex(c => c.id === id);
+        if (idx === -1) throw new Error('العميل غير موجود');
+        clients[idx] = { ...clients[idx], ...body };
+        localSave('clients', clients);
+        return clients[idx];
+    }
+    if (endpoint.match(/\/api\/admin\/clients\/(.+)/) && method === 'DELETE') {
+        const id = endpoint.split('/').pop();
+        let clients = localDB('clients');
+        clients = clients.filter(c => c.id !== id);
+        localSave('clients', clients);
+        let licenses = localDB('licenses');
+        licenses = licenses.filter(l => l.clientId !== id);
+        localSave('licenses', licenses);
+        let devices = localDB('devices');
+        devices = devices.filter(d => d.clientId !== id);
+        localSave('devices', devices);
+        return { success: true };
+    }
+    if (endpoint.match(/\/api\/admin\/clients\/(.+)/) && method === 'GET') {
+        const id = endpoint.split('/').pop();
+        const clients = localDB('clients');
+        const client = clients.find(c => c.id === id);
+        if (!client) throw new Error('العميل غير موجود');
+        const devices = localDB('devices').filter(d => d.clientId === id);
+        const licenses = localDB('licenses').filter(l => l.clientId === id);
+        return { client, devices, licenses };
+    }
+
+    // Licenses
+    if (endpoint === '/api/admin/licenses' && method === 'GET') {
+        return localDB('licenses').reverse();
+    }
+    if (endpoint === '/api/admin/licenses' && method === 'POST') {
+        const licenses = localDB('licenses');
+        const licenseKey = genLicenseKey(body.plan || 'basic');
+        const start = new Date().toISOString();
+        const end = new Date(); end.setDate(end.getDate() + (body.days || 365));
+        const clients = localDB('clients');
+        const client = clients.find(c => c.id === body.clientId);
+        const lic = { id: 'l_' + Date.now(), clientId: body.clientId, licenseKey, plan: body.plan || 'basic', startDate: start, endDate: end.toISOString(), status: 'active', company: client?.company, clientName: client?.name };
+        licenses.push(lic);
+        localSave('licenses', licenses);
+        // Update client
+        if (client) {
+            client.licenseKey = licenseKey;
+            client.plan = body.plan || 'basic';
+            client.startDate = start;
+            client.endDate = end.toISOString();
+            client.status = 'active';
+            localSave('clients', clients);
+        }
+        return lic;
+    }
+    if (endpoint.match(/\/api\/admin\/licenses\/(.+)\/renew/)) {
+        const id = endpoint.split('/')[4];
+        const licenses = localDB('licenses');
+        const lic = licenses.find(l => l.id === id);
+        if (!lic) throw new Error('الترخيص غير موجود');
+        const end = new Date(); end.setDate(end.getDate() + (body?.days || 365));
+        lic.endDate = end.toISOString();
+        lic.status = 'active';
+        localSave('licenses', licenses);
+        const clients = localDB('clients');
+        const cl = clients.find(c => c.id === lic.clientId);
+        if (cl) { cl.endDate = end.toISOString(); cl.status = 'active'; localSave('clients', clients); }
+        return { success: true, endDate: end.toISOString() };
+    }
+    if (endpoint.match(/\/api\/admin\/licenses\/(.+)\/revoke/)) {
+        const id = endpoint.split('/')[4];
+        const licenses = localDB('licenses');
+        const lic = licenses.find(l => l.id === id);
+        if (!lic) throw new Error('الترخيص غير موجود');
+        lic.status = 'revoked';
+        localSave('licenses', licenses);
+        const clients = localDB('clients');
+        const cl = clients.find(c => c.id === lic.clientId);
+        if (cl) { cl.status = 'suspended'; localSave('clients', clients); }
+        return { success: true };
+    }
+
+    // Devices
+    if (endpoint === '/api/admin/devices' && method === 'GET') {
+        return localDB('devices').reverse();
+    }
+    if (endpoint.match(/\/api\/admin\/devices\/(.+)/) && method === 'DELETE') {
+        const id = endpoint.split('/').pop();
+        let devices = localDB('devices');
+        devices = devices.filter(d => d.id !== id);
+        localSave('devices', devices);
+        return { success: true };
+    }
+
+    // Admin Users
+    if (endpoint === '/api/admin/users') {
+        return [
+            { id: 'au1', username: 'admin', name: 'مدير النظام', role: 'super_admin', email: 'admin@stockpro.com', phone: '01000000000' },
+            { id: 'au2', username: 'support', name: 'دعم فني', role: 'support', email: 'support@stockpro.com', phone: '01111111111' }
+        ];
+    }
+
+    throw new Error('Unknown endpoint: ' + endpoint);
+}
+
+// ── RBAC ──
+const ROLES = {
+    super_admin: { label: 'Super Admin', icon: '👑', permissions: ['all'] },
+    admin: { label: 'Admin', icon: '🔧', permissions: ['manage_clients', 'manage_devices', 'manage_licenses', 'view_all'] },
+    support: { label: 'Support', icon: '🎧', permissions: ['view_all'] },
+    client_admin: { label: 'Client Admin', icon: '👤', permissions: ['manage_own_users'] },
+};
+
+function can(action) {
+    if (!ADMIN.user) return false;
+    const role = ROLES[ADMIN.user.role];
+    if (!role) return false;
+    if (role.permissions.includes('all')) return true;
+    return role.permissions.includes(action);
+}
+function canEdit() { return can('all') || can('manage_clients'); }
+function canDelete() { return can('all'); }
+
+// ── Auth (Local) ──
+async function adminLogin() {
+    const username = $('login-user').value.trim();
+    const password = $('login-pass').value;
+    const masterKey = $('login-master-key').value.trim();
+
+    if (!masterKey || masterKey !== MASTER_KEY_HEADER) {
+        adminToast('❌ مفتاح المالك غير صحيح', 'error');
+        $('login-master-key').value = '';
+        return;
+    }
+
+    // Local auth
+    const users = { admin: { pass: 'admin123', name: 'مدير النظام', role: 'super_admin' }, support: { pass: 'support123', name: 'دعم فني', role: 'support' } };
+    const u = users[username];
+    if (!u || u.pass !== password) {
+        adminToast('❌ بيانات خاطئة', 'error');
+        $('login-pass').value = '';
+        return;
+    }
+
+    ADMIN.user = { id: 'au1', username, name: u.name, role: u.role };
+
+    $('login-screen').style.display = 'none';
+    $('admin-app').style.display = 'flex';
+    $('admin-user-name').textContent = u.name;
+    $('admin-user-role').textContent = ROLES[u.role]?.label || u.role;
+    $('sidebar-user-info').textContent = ROLES[u.role]?.icon + ' ' + u.name;
+
+    const permNav = document.querySelector('[data-nav="permissions"]');
+    if (permNav) permNav.style.display = (u.role === 'super_admin') ? '' : 'none';
+
+    adminToast('✅ مرحباً ' + u.name);
+    renderAdminScreen();
+}
+
+function adminLogout() {
+    ADMIN.user = null;
+    $('admin-app').style.display = 'none';
+    $('login-screen').style.display = 'flex';
+    $('login-pass').value = '';
+}
+
+// ── Navigation ──
+function adminNav(screen) {
+    if (screen === 'permissions' && (!ADMIN.user || ADMIN.user.role !== 'super_admin')) {
+        adminToast('❌ هذا القسم متاح فقط لـ Super Admin', 'error');
+        return;
+    }
+    ADMIN.screen = screen;
+    document.querySelectorAll('.admin-nav-item').forEach(n => n.classList.toggle('active', n.dataset.nav === screen));
+    const titles = { dashboard: 'لوحة التحكم', clients: 'العملاء', devices: 'الأجهزة', licenses: 'التراخيص', permissions: 'الصلاحيات' };
+    $('admin-title').textContent = titles[screen] || '';
+    renderAdminScreen();
+}
+
+function renderAdminScreen() {
+    const c = $('admin-content');
+    switch (ADMIN.screen) {
+        case 'dashboard': renderAdminDash(c); break;
+        case 'clients': renderClients(c); break;
+        case 'devices': renderDevices(c); break;
+        case 'licenses': renderLicenses(c); break;
+        case 'permissions': renderPermissions(c); break;
+    }
+}
+
+// ── Modal ──
+function openAdminModal(html) {
+    $('admin-modal-box').innerHTML = html;
+    $('admin-modal').classList.add('show');
+}
+function closeAdminModal() { $('admin-modal').classList.remove('show'); }
+
+function planLabel(p) {
+    return { basic: 'أساسي', premium: 'بريميوم', enterprise: 'مؤسسي' }[p] || p || '—';
+}
+
+// ═══════════════════════════════════════════════════
+//  DASHBOARD
+// ═══════════════════════════════════════════════════
+async function renderAdminDash(c) {
+    c.innerHTML = '<div style="text-align:center;padding:40px;color:var(--muted)">⏳ جاري التحميل...</div>';
+    try {
+        const d = await api('/api/admin/dashboard');
+        c.innerHTML = `
+        <div class="admin-stats">
+            <div class="admin-stat"><div class="admin-stat-icon purple">👥</div><div><div class="admin-stat-value">${d.totalClients}</div><div class="admin-stat-label">إجمالي العملاء</div></div></div>
+            <div class="admin-stat"><div class="admin-stat-icon green">✅</div><div><div class="admin-stat-value">${d.activeClients}</div><div class="admin-stat-label">عملاء نشطين</div></div></div>
+            <div class="admin-stat"><div class="admin-stat-icon red">⛔</div><div><div class="admin-stat-value">${d.expiredClients}</div><div class="admin-stat-label">اشتراكات منتهية</div></div></div>
+            <div class="admin-stat"><div class="admin-stat-icon blue">💻</div><div><div class="admin-stat-value">${d.onlineDevices} / ${d.totalDevices}</div><div class="admin-stat-label">أجهزة متصلة</div></div></div>
+            <div class="admin-stat"><div class="admin-stat-icon yellow">📜</div><div><div class="admin-stat-value">${d.activeLicenses}</div><div class="admin-stat-label">تراخيص فعالة</div></div></div>
+        </div>
+        <div class="client-detail-grid">
+            <div class="client-detail-card"><h4>📋 آخر العملاء</h4>
+                ${d.recentClients.map(cl => `<div class="toggle-wrap"><span class="toggle-label">${cl.company} — ${cl.name}</span><span class="badge ${cl.status === 'active' ? 'badge-green' : 'badge-red'}">${cl.status === 'active' ? 'نشط' : 'منتهي'}</span></div>`).join('') || '<div class="empty-state">لا يوجد عملاء</div>'}
+            </div>
+            <div class="client-detail-card"><h4>💻 آخر الأجهزة</h4>
+                ${d.recentDevices.map(dv => `<div class="toggle-wrap"><span class="toggle-label">${dv.deviceName} — ${dv.company || '—'}</span><span class="badge ${dv.status === 'online' ? 'badge-green' : 'badge-red'}">${dv.status === 'online' ? 'متصل' : 'غير متصل'}</span></div>`).join('') || '<div class="empty-state">لا يوجد أجهزة</div>'}
+            </div>
+        </div>`;
+    } catch (e) { c.innerHTML = '<div class="empty-state">❌ تعذر تحميل البيانات — تأكد من تشغيل السيرفر</div>'; }
+}
+
+// ═══════════════════════════════════════════════════
+//  CLIENTS
+// ═══════════════════════════════════════════════════
+async function renderClients(c) {
+    c.innerHTML = '<div style="text-align:center;padding:40px;color:var(--muted)">⏳ جاري التحميل...</div>';
+    try {
+        ADMIN.cache.clients = await api('/api/admin/clients');
+        c.innerHTML = `
+        <div class="admin-toolbar">
+            <input class="admin-search" placeholder="🔍 بحث بالاسم أو الشركة..." oninput="filterClients(this.value)">
+            ${canEdit() ? '<button class="btn btn-primary" onclick="openClientForm()">➕ إضافة عميل</button>' : ''}
+        </div>
+        <div class="admin-table-wrap">
+            <table class="admin-table"><thead><tr>
+                <th>الشركة</th><th>العميل</th><th>الهاتف</th><th>الخطة</th><th>الحالة</th><th>مفتاح الترخيص</th><th>إجراءات</th>
+            </tr></thead><tbody id="clients-tbody"></tbody></table>
+        </div>`;
+        renderClientRows(ADMIN.cache.clients);
+    } catch (e) { c.innerHTML = '<div class="empty-state">❌ تعذر تحميل العملاء</div>'; }
+}
+
+ADMIN.clientSearch = '';
+function filterClients(q) { ADMIN.clientSearch = q; renderClientRows(ADMIN.cache.clients || []); }
+
+function renderClientRows(clients) {
+    const q = ADMIN.clientSearch || '';
+    let filtered = clients;
+    if (q) filtered = filtered.filter(cl => cl.name.includes(q) || cl.company.includes(q) || (cl.phone || '').includes(q));
+    const tbody = $('clients-tbody');
+    if (!tbody) return;
+    tbody.innerHTML = filtered.map(cl => `<tr>
+        <td><strong>${cl.company}</strong></td>
+        <td>${cl.name}</td>
+        <td style="direction:ltr;text-align:right">${cl.phone || '—'}</td>
+        <td><span class="badge badge-purple">${planLabel(cl.plan)}</span></td>
+        <td><span class="badge ${cl.status === 'active' ? 'badge-green' : 'badge-red'}">${cl.status === 'active' ? 'نشط' : cl.status === 'suspended' ? 'معلق' : 'منتهي'}</span></td>
+        <td><code style="font-size:10px;color:var(--accent)">${cl.licenseKey || '—'}</code></td>
+        <td><div class="action-row">
+            <button class="action-btn" onclick="viewClient('${cl.id}')" title="عرض">👁️</button>
+            ${canEdit() ? `<button class="action-btn" onclick="openClientForm('${cl.id}')" title="تعديل">✏️</button>` : ''}
+            ${canDelete() ? `<button class="action-btn del" onclick="deleteClient('${cl.id}')" title="حذف">🗑️</button>` : ''}
+        </div></td>
+    </tr>`).join('') || '<tr><td colspan="7" class="empty-state">لا يوجد عملاء</td></tr>';
+}
+
+function openClientForm(id) {
+    const cl = id && ADMIN.cache.clients ? ADMIN.cache.clients.find(c => c.id === id) : null;
+    const isEdit = !!cl;
+    openAdminModal(`
+    <div class="modal-header"><div class="modal-title">${isEdit ? '✏️ تعديل عميل' : '➕ عميل جديد'}</div><button class="modal-close" onclick="closeAdminModal()">✕</button></div>
+    <div class="modal-body">
+        <div class="section-title">بيانات العميل</div>
+        <div class="form-row">
+            <div class="form-group"><label class="form-label">الاسم</label><input class="form-input" id="cf-name" value="${cl?.name || ''}"></div>
+            <div class="form-group"><label class="form-label">الشركة</label><input class="form-input" id="cf-company" value="${cl?.company || ''}"></div>
+        </div>
+        <div class="form-row">
+            <div class="form-group"><label class="form-label">الهاتف</label><input class="form-input" id="cf-phone" value="${cl?.phone || ''}"></div>
+            <div class="form-group"><label class="form-label">البريد</label><input class="form-input" id="cf-email" value="${cl?.email || ''}"></div>
+        </div>
+        <div class="section-title">الاشتراك</div>
+        <div class="form-row">
+            <div class="form-group"><label class="form-label">الخطة</label><select class="form-select" id="cf-plan"><option value="basic" ${cl?.plan === 'basic' ? 'selected' : ''}>أساسي</option><option value="premium" ${cl?.plan === 'premium' ? 'selected' : ''}>بريميوم</option><option value="enterprise" ${cl?.plan === 'enterprise' ? 'selected' : ''}>مؤسسي</option></select></div>
+            <div class="form-group"><label class="form-label">الحالة</label><select class="form-select" id="cf-status"><option value="active" ${cl?.status === 'active' ? 'selected' : ''}>نشط</option><option value="expired" ${cl?.status === 'expired' ? 'selected' : ''}>منتهي</option><option value="suspended" ${cl?.status === 'suspended' ? 'selected' : ''}>معلق</option></select></div>
+        </div>
+        <div class="form-row">
+            <div class="form-group"><label class="form-label">بداية الاشتراك</label><input type="date" class="form-input" id="cf-start" value="${cl?.startDate?.split('T')[0] || new Date().toISOString().split('T')[0]}"></div>
+            <div class="form-group"><label class="form-label">نهاية الاشتراك</label><input type="date" class="form-input" id="cf-end" value="${cl?.endDate?.split('T')[0] || ''}"></div>
+        </div>
+        <div class="form-row">
+            <div class="form-group"><label class="form-label">عدد المستخدمين</label><input type="number" class="form-input" id="cf-users" value="${cl?.maxUsers || 5}" min="1"></div>
+            <div class="form-group"><label class="form-label">عدد المخازن</label><input type="number" class="form-input" id="cf-wh" value="${cl?.maxWarehouses || 1}" min="1"></div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" onclick="saveClient('${id || ''}')">${isEdit ? '💾 حفظ التعديلات' : '➕ إضافة'}</button>
+        <button class="btn btn-ghost" onclick="closeAdminModal()">إلغاء</button>
+    </div>`);
+}
+
+async function saveClient(id) {
+    const data = {
+        name: $('cf-name').value.trim(),
+        company: $('cf-company').value.trim(),
+        phone: $('cf-phone').value.trim(),
+        email: $('cf-email').value.trim(),
+        plan: $('cf-plan').value,
+        status: $('cf-status').value,
+        startDate: $('cf-start').value ? new Date($('cf-start').value).toISOString() : new Date().toISOString(),
+        endDate: $('cf-end').value ? new Date($('cf-end').value).toISOString() : '',
+        maxUsers: parseInt($('cf-users').value) || 5,
+        maxWarehouses: parseInt($('cf-wh').value) || 1,
+        features: { sales: true, inventory: true, reports: true }
+    };
+    if (!data.name || !data.company) { adminToast('أدخل الاسم والشركة', 'error'); return; }
+
+    try {
+        if (id) {
+            await api('/api/admin/clients/' + id, 'PUT', data);
+            adminToast('✅ تم تحديث العميل');
+        } else {
+            const result = await api('/api/admin/clients', 'POST', data);
+            adminToast('✅ تم إضافة العميل — المفتاح: ' + result.licenseKey);
+        }
+        closeAdminModal();
+        renderAdminScreen();
+    } catch (err) { adminToast('❌ ' + err.message, 'error'); }
+}
+
+async function deleteClient(id) {
+    if (!confirm('حذف هذا العميل وجميع بياناته؟')) return;
+    try {
+        await api('/api/admin/clients/' + id, 'DELETE');
+        adminToast('🗑️ تم حذف العميل');
+        renderAdminScreen();
+    } catch (err) { adminToast('❌ ' + err.message, 'error'); }
+}
+
+async function viewClient(id) {
+    try {
+        const { client: cl, devices, licenses } = await api('/api/admin/clients/' + id);
+        const daysLeft = cl.endDate ? Math.ceil((new Date(cl.endDate) - new Date()) / 86400000) : 0;
+        const progress = cl.endDate && cl.startDate ?
+            Math.max(0, Math.min(100, ((new Date() - new Date(cl.startDate)) / (new Date(cl.endDate) - new Date(cl.startDate))) * 100)) : 0;
+
+        openAdminModal(`
+        <div class="modal-header"><div class="modal-title">👤 ${cl.company}</div><button class="modal-close" onclick="closeAdminModal()">✕</button></div>
+        <div class="modal-body">
+            <div class="client-detail-grid">
+                <div class="client-detail-card"><h4>📋 البيانات</h4>
+                    <div class="toggle-wrap"><span>الاسم</span><strong>${cl.name}</strong></div>
+                    <div class="toggle-wrap"><span>الهاتف</span><strong>${cl.phone}</strong></div>
+                    <div class="toggle-wrap"><span>البريد</span><strong>${cl.email || '—'}</strong></div>
+                    <div class="toggle-wrap"><span>مفتاح الترخيص</span><strong style="font-family:monospace;font-size:11px">${cl.licenseKey}</strong></div>
+                </div>
+                <div class="client-detail-card"><h4>⚙️ الحدود</h4>
+                    <div class="toggle-wrap"><span>المستخدمين</span><strong>${cl.maxUsers}</strong></div>
+                    <div class="toggle-wrap"><span>المخازن</span><strong>${cl.maxWarehouses}</strong></div>
+                </div>
+            </div>
+            <div class="client-detail-card" style="margin-top:16px"><h4>📜 الاشتراك</h4>
+                <div class="toggle-wrap"><span>الخطة</span><span class="badge badge-purple">${planLabel(cl.plan)}</span></div>
+                <div class="toggle-wrap"><span>البداية</span><strong>${fmtDate(cl.startDate)}</strong></div>
+                <div class="toggle-wrap"><span>النهاية</span><strong>${fmtDate(cl.endDate)}</strong></div>
+                <div class="toggle-wrap"><span>المتبقي</span><strong style="color:${daysLeft > 30 ? 'var(--green)' : daysLeft > 0 ? 'var(--yellow)' : 'var(--red)'}">${daysLeft > 0 ? daysLeft + ' يوم' : 'منتهي'}</strong></div>
+                <div class="progress-bar" style="margin-top:8px"><div class="progress-fill" style="width:${progress}%"></div></div>
+            </div>
+            ${devices.length ? `<div class="client-detail-card" style="margin-top:16px"><h4>💻 الأجهزة (${devices.length})</h4>
+                ${devices.map(d => `<div class="toggle-wrap"><span>${d.deviceName} (${d.deviceType})</span><span class="badge ${d.status === 'online' ? 'badge-green' : 'badge-red'}">${d.status === 'online' ? 'متصل' : 'غير متصل'}</span></div>`).join('')}
+            </div>` : ''}
+        </div>`);
+    } catch (err) { adminToast('❌ ' + err.message, 'error'); }
+}
+
+// ═══════════════════════════════════════════════════
+//  DEVICES
+// ═══════════════════════════════════════════════════
+async function renderDevices(c) {
+    c.innerHTML = '<div style="text-align:center;padding:40px;color:var(--muted)">⏳ جاري التحميل...</div>';
+    try {
+        ADMIN.cache.devices = await api('/api/admin/devices');
+        c.innerHTML = `
+        <div class="admin-toolbar">
+            <input class="admin-search" placeholder="🔍 بحث..." oninput="filterDevices(this.value)">
+            ${canEdit() ? '<button class="btn btn-primary" onclick="openDeviceForm()">➕ إضافة جهاز</button>' : ''}
+        </div>
+        <div class="admin-table-wrap">
+            <table class="admin-table"><thead><tr>
+                <th>اسم الجهاز</th><th>النوع</th><th>العميل</th><th>آخر اتصال</th><th>الحالة</th><th>إجراءات</th>
+            </tr></thead><tbody id="devices-tbody"></tbody></table>
+        </div>`;
+        renderDeviceRows(ADMIN.cache.devices);
+    } catch (e) { c.innerHTML = '<div class="empty-state">❌ تعذر تحميل الأجهزة</div>'; }
+}
+
+ADMIN.deviceSearch = '';
+function filterDevices(q) { ADMIN.deviceSearch = q; renderDeviceRows(ADMIN.cache.devices || []); }
+
+function renderDeviceRows(devices) {
+    const q = ADMIN.deviceSearch || '';
+    let filtered = devices;
+    if (q) filtered = filtered.filter(d => d.deviceName.includes(q));
+    const tbody = $('devices-tbody');
+    if (!tbody) return;
+    const typeIcons = { desktop: '🖥️', tablet: '📱', laptop: '💻', mobile: '📲' };
+    tbody.innerHTML = filtered.map(d => `<tr>
+        <td><strong>${d.deviceName}</strong></td>
+        <td>${typeIcons[d.deviceType] || '💻'} ${d.deviceType}</td>
+        <td>${d.company || '—'}</td>
+        <td>${fmtDate(d.lastSeen)}</td>
+        <td><span class="badge ${d.status === 'online' ? 'badge-green' : 'badge-red'}">${d.status === 'online' ? 'متصل' : 'غير متصل'}</span></td>
+        <td><div class="action-row">
+            ${canDelete() ? `<button class="action-btn del" onclick="deleteDevice('${d.id}')" title="حذف">🗑️</button>` : ''}
+        </div></td>
+    </tr>`).join('') || '<tr><td colspan="6" class="empty-state">لا يوجد أجهزة</td></tr>';
+}
+
+async function deleteDevice(id) {
+    if (!confirm('حذف هذا الجهاز؟')) return;
+    try {
+        await api('/api/admin/devices/' + id, 'DELETE');
+        adminToast('🗑️ تم الحذف');
+        renderAdminScreen();
+    } catch (err) { adminToast('❌ ' + err.message, 'error'); }
+}
+
+// ═══════════════════════════════════════════════════
+//  LICENSES
+// ═══════════════════════════════════════════════════
+async function renderLicenses(c) {
+    c.innerHTML = '<div style="text-align:center;padding:40px;color:var(--muted)">⏳ جاري التحميل...</div>';
+    try {
+        ADMIN.cache.licenses = await api('/api/admin/licenses');
+        c.innerHTML = `
+        <div class="admin-toolbar">
+            <input class="admin-search" placeholder="🔍 بحث بمفتاح الترخيص..." oninput="filterLicenses(this.value)">
+            ${canEdit() ? '<button class="btn btn-primary" onclick="openLicenseForm()">➕ ترخيص جديد</button>' : ''}
+        </div>
+        <div class="admin-table-wrap">
+            <table class="admin-table"><thead><tr>
+                <th>مفتاح الترخيص</th><th>العميل</th><th>الخطة</th><th>البداية</th><th>النهاية</th><th>الحالة</th><th>إجراءات</th>
+            </tr></thead><tbody id="licenses-tbody"></tbody></table>
+        </div>`;
+        renderLicenseRows(ADMIN.cache.licenses);
+    } catch (e) { c.innerHTML = '<div class="empty-state">❌ تعذر تحميل التراخيص</div>'; }
+}
+
+ADMIN.licenseSearch = '';
+function filterLicenses(q) { ADMIN.licenseSearch = q; renderLicenseRows(ADMIN.cache.licenses || []); }
+
+function renderLicenseRows(licenses) {
+    const q = ADMIN.licenseSearch || '';
+    let filtered = licenses;
+    if (q) filtered = filtered.filter(l => (l.licenseKey || '').includes(q.toUpperCase()));
+    const tbody = $('licenses-tbody');
+    if (!tbody) return;
+    tbody.innerHTML = filtered.map(l => `<tr>
+        <td><code style="font-size:11px;color:var(--accent)">${l.licenseKey}</code></td>
+        <td>${l.company || l.clientName || '—'}</td>
+        <td><span class="badge badge-purple">${planLabel(l.plan)}</span></td>
+        <td>${fmtDate(l.startDate)}</td>
+        <td>${fmtDate(l.endDate)}</td>
+        <td><span class="badge ${l.status === 'active' ? 'badge-green' : 'badge-red'}">${l.status === 'active' ? 'فعال' : l.status === 'revoked' ? 'ملغي' : 'منتهي'}</span></td>
+        <td><div class="action-row">
+            ${canEdit() ? `<button class="action-btn" onclick="renewLicense('${l.id}')" title="تجديد">🔄</button>` : ''}
+            ${canDelete() ? `<button class="action-btn del" onclick="revokeLicense('${l.id}')" title="إلغاء">⛔</button>` : ''}
+        </div></td>
+    </tr>`).join('') || '<tr><td colspan="7" class="empty-state">لا يوجد تراخيص</td></tr>';
+}
+
+async function openLicenseForm() {
+    try {
+        const clients = ADMIN.cache.clients || await api('/api/admin/clients');
+        openAdminModal(`
+        <div class="modal-header"><div class="modal-title">➕ ترخيص جديد</div><button class="modal-close" onclick="closeAdminModal()">✕</button></div>
+        <div class="modal-body">
+            <div class="form-group"><label class="form-label">العميل</label><select class="form-select" id="lf-client">${clients.map(cl => `<option value="${cl.id}">${cl.company}</option>`).join('')}</select></div>
+            <div class="form-row">
+                <div class="form-group"><label class="form-label">الخطة</label><select class="form-select" id="lf-plan"><option value="basic">أساسي</option><option value="premium">بريميوم</option><option value="enterprise">مؤسسي</option></select></div>
+                <div class="form-group"><label class="form-label">المدة (أيام)</label><input type="number" class="form-input" id="lf-days" value="365" min="1"></div>
+            </div>
+        </div>
+        <div class="modal-footer"><button class="btn btn-primary" onclick="saveLicense()">➕ إنشاء</button><button class="btn btn-ghost" onclick="closeAdminModal()">إلغاء</button></div>`);
+    } catch (err) { adminToast('❌ ' + err.message, 'error'); }
+}
+
+async function saveLicense() {
+    try {
+        const result = await api('/api/admin/licenses', 'POST', {
+            clientId: $('lf-client').value,
+            plan: $('lf-plan').value,
+            days: parseInt($('lf-days').value) || 365
+        });
+        adminToast('✅ تم إنشاء الترخيص: ' + result.licenseKey);
+        closeAdminModal();
+        renderAdminScreen();
+    } catch (err) { adminToast('❌ ' + err.message, 'error'); }
+}
+
+async function renewLicense(id) {
+    const days = parseInt(prompt('مدة التجديد بالأيام:', '365'));
+    if (!days || days <= 0) return;
+    try {
+        await api('/api/admin/licenses/' + id + '/renew', 'PUT', { days });
+        adminToast('✅ تم التجديد');
+        renderAdminScreen();
+    } catch (err) { adminToast('❌ ' + err.message, 'error'); }
+}
+
+async function revokeLicense(id) {
+    if (!confirm('إلغاء هذا الترخيص؟ العميل لن يستطيع الدخول بعد الآن.')) return;
+    try {
+        await api('/api/admin/licenses/' + id + '/revoke', 'PUT');
+        adminToast('⛔ تم إلغاء الترخيص');
+        renderAdminScreen();
+    } catch (err) { adminToast('❌ ' + err.message, 'error'); }
+}
+
+// ═══════════════════════════════════════════════════
+//  PERMISSIONS (RBAC)
+// ═══════════════════════════════════════════════════
+async function renderPermissions(c) {
+    c.innerHTML = '<div style="text-align:center;padding:40px;color:var(--muted)">⏳ جاري التحميل...</div>';
+    try {
+        const adminUsers = await api('/api/admin/users');
+
+        function roleDesc(key) {
+            return { super_admin: 'صلاحيات كاملة', admin: 'إدارة العملاء والأجهزة', support: 'عرض فقط', client_admin: 'إدارة موظفين العميل' }[key] || '';
+        }
+        function permCheck(role, perm) {
+            const r = ROLES[role];
+            if (r.permissions.includes('all')) return 'rbac-check';
+            if (perm === 'view_all') return r.permissions.includes('view_all') || r.permissions.includes('manage_clients') ? 'rbac-check' : 'rbac-cross';
+            if (['delete', 'manage_permissions'].includes(perm)) return r.permissions.includes('all') ? 'rbac-check' : 'rbac-cross';
+            return r.permissions.includes(perm) ? 'rbac-check' : 'rbac-cross';
+        }
+        function permIcon(role, perm) { return permCheck(role, perm) === 'rbac-check' ? '✅' : '❌'; }
+
+        c.innerHTML = `
+        <div class="section-title" style="margin-top:0">🔐 الأدوار والصلاحيات</div>
+        <div class="rbac-grid">
+            ${Object.entries(ROLES).map(([key, role]) => `
+            <div class="rbac-card">
+                <div class="rbac-role">${role.icon} ${role.label}</div>
+                <div class="rbac-desc">${roleDesc(key)}</div>
+                <ul class="rbac-perm-list">
+                    <li><span class="${permCheck(key, 'manage_clients')}">${permIcon(key, 'manage_clients')}</span> إدارة العملاء</li>
+                    <li><span class="${permCheck(key, 'manage_devices')}">${permIcon(key, 'manage_devices')}</span> إدارة الأجهزة</li>
+                    <li><span class="${permCheck(key, 'manage_licenses')}">${permIcon(key, 'manage_licenses')}</span> إدارة التراخيص</li>
+                    <li><span class="${permCheck(key, 'view_all')}">${permIcon(key, 'view_all')}</span> عرض الكل</li>
+                    <li><span class="${permCheck(key, 'delete')}">${permIcon(key, 'delete')}</span> حذف السجلات</li>
+                </ul>
+            </div>`).join('')}
+        </div>
+
+        <div class="section-title" style="margin-top:24px">👤 مستخدمي الأدمن</div>
+        <div class="admin-table-wrap">
+            <table class="admin-table"><thead><tr>
+                <th>الاسم</th><th>اسم المستخدم</th><th>الدور</th><th>البريد</th><th>الهاتف</th>
+            </tr></thead><tbody>
+            ${adminUsers.map(u => `<tr>
+                <td><strong>${u.name}</strong></td>
+                <td>${u.username}</td>
+                <td><span class="badge badge-purple">${ROLES[u.role]?.icon || ''} ${ROLES[u.role]?.label || u.role}</span></td>
+                <td>${u.email || '—'}</td>
+                <td>${u.phone || '—'}</td>
+            </tr>`).join('')}
+            </tbody></table>
+        </div>`;
+    } catch (e) { c.innerHTML = '<div class="empty-state">❌ تعذر تحميل البيانات</div>'; }
+}
+
+</script>
+</body>
+
+</html>

@@ -1,0 +1,70 @@
+{
+  "name": "stockpro",
+  "version": "1.0.0",
+  "description": "StockPro — نظام إدارة المخازن والمبيعات",
+  "main": "electron-main.js",
+  "scripts": {
+    "start": "electron .",
+    "server": "node server.js",
+    "build": "electron-builder",
+    "build:mac": "electron-builder --mac",
+    "build:win": "electron-builder --win",
+    "build:linux": "electron-builder --linux"
+  },
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "better-sqlite3": "^11.10.0",
+    "cors": "^2.8.6",
+    "express": "^4.22.1",
+    "jsonwebtoken": "^9.0.3",
+    "uuid": "^9.0.1"
+  },
+  "build": {
+    "appId": "com.stockpro.app",
+    "productName": "StockPro",
+    "files": [
+      "stockpro.html",
+      "stockpro.css",
+      "stockpro.js",
+      "stockpro-data.js",
+      "admin.html",
+      "admin.css",
+      "admin.js",
+      "electron-main.js",
+      "manifest.json",
+      "sw.js",
+      "icon.png"
+    ],
+    "mac": {
+      "category": "public.app-category.business",
+      "icon": "icon.png",
+      "target": [
+        "dmg"
+      ]
+    },
+    "win": {
+      "icon": "icon.png",
+      "target": [
+        "nsis"
+      ]
+    },
+    "linux": {
+      "icon": "icon.png",
+      "target": [
+        "AppImage"
+      ]
+    },
+    "nsis": {
+      "oneClick": true,
+      "installerIcon": "icon.ico",
+      "uninstallerIcon": "icon.ico",
+      "allowToChangeInstallationDirectory": false
+    }
+  },
+  "author": "StockPro",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^40.6.0",
+    "electron-builder": "^26.8.1"
+  }
+}

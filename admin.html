@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StockPro — لوحة الأدمن</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="admin.css">
+</head>
+
+<body>
+
+    <!-- Login -->
+    <div class="login-overlay" id="login-screen">
+        <div class="login-box">
+            <div class="login-logo">🛡️</div>
+            <div class="login-title">StockPro Admin</div>
+            <div class="login-sub">لوحة تحكم إدارة النظام</div>
+            <div class="form-group">
+                <label class="form-label">اسم المستخدم</label>
+                <input type="text" class="form-input" id="login-user" placeholder="admin">
+            </div>
+            <div class="form-group">
+                <label class="form-label">كلمة المرور</label>
+                <input type="password" class="form-input" id="login-pass" placeholder="••••••">
+            </div>
+            <div class="form-group">
+                <label class="form-label">🔑 مفتاح المالك (Master Key)</label>
+                <input type="password" class="form-input" id="login-master-key" placeholder="أدخل مفتاح المالك"
+                    onkeydown="if(event.key==='Enter') adminLogin()" style="border-color:rgba(251,146,60,0.3)">
+                <div style="font-size:10px;color:#94a3b8;margin-top:4px">⚠️ هذا المفتاح متاح فقط لمالك البرنامج</div>
+            </div>
+            <button class="login-btn" onclick="adminLogin()">🔓 تسجيل الدخول</button>
+        </div>
+    </div>
+
+    <!-- App -->
+    <div class="admin-app" id="admin-app" style="display:none">
+        <aside class="admin-sidebar">
+            <div class="sidebar-brand">
+                <div class="sidebar-brand-icon">🛡️</div>
+                <div class="sidebar-brand-name">StockPro Admin</div>
+                <div class="sidebar-brand-sub">لوحة إدارة النظام</div>
+            </div>
+            <nav class="sidebar-nav">
+                <div class="admin-nav-item active" data-nav="dashboard" onclick="adminNav('dashboard')">
+                    <span class="admin-nav-icon">📊</span> لوحة التحكم
+                </div>
+                <div class="admin-nav-item" data-nav="clients" onclick="adminNav('clients')">
+                    <span class="admin-nav-icon">👥</span> العملاء
+                </div>
+                <div class="admin-nav-item" data-nav="devices" onclick="adminNav('devices')">
+                    <span class="admin-nav-icon">💻</span> الأجهزة
+                </div>
+                <div class="admin-nav-item" data-nav="licenses" onclick="adminNav('licenses')">
+                    <span class="admin-nav-icon">📜</span> التراخيص
+                </div>
+                <div class="admin-nav-item" data-nav="permissions" onclick="adminNav('permissions')">
+                    <span class="admin-nav-icon">🔐</span> الصلاحيات
+                </div>
+            </nav>
+            <div class="sidebar-footer">
+                <div id="sidebar-user-info"></div>
+                <button class="btn btn-ghost btn-sm" onclick="adminLogout()" style="margin-top:8px;width:100%">🚪 تسجيل
+                    خروج</button>
+            </div>
+        </aside>
+
+        <div class="admin-main">
+            <header class="admin-header">
+                <div class="admin-header-title" id="admin-title">لوحة التحكم</div>
+                <div class="admin-header-user">
+                    <span id="admin-user-name"></span>
+                    <span class="admin-header-role" id="admin-user-role"></span>
+                </div>
+            </header>
+            <div class="admin-content" id="admin-content"></div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="admin-modal" onclick="if(event.target===this)closeAdminModal()">
+        <div class="modal-box" id="admin-modal-box"></div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast-container" id="admin-toast"></div>
+
+    <script src="sp-core.js"></script>
+    <script src="sp-admin.js"></script>
+</body>
+
+</html>

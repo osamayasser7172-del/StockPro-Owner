@@ -22,6 +22,9 @@ app.use(express.json());
 // Serve static files (admin.html, stockpro.html, etc.)
 app.use(express.static(path.join(__dirname)));
 
+// Redirect root to main app
+app.get('/', (req, res) => res.redirect('/stockpro.html'));
+
 // ── Database Setup ──
 const db = new Database(path.join(__dirname, 'stockpro.db'));
 db.pragma('journal_mode = WAL');

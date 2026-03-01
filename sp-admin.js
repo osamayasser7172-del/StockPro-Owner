@@ -19,14 +19,30 @@ function adminToast(msg, type = 'success') {
     setTimeout(() => t.remove(), 3000);
 }
 
-// ── LocalDB Layer (replaces server API) ──
-function localDB(key) {
-    return JSON.parse(localStorage.getItem('spadmin_' + key) || '[]');
+// ── Server API Layer (connects to Render server) ──
+const SP_ADMIN_SERVER = (function () {
+    if (location.protocol === 'file:' || location.hostname === '127.0.0.1' || location.hostname === 'localhost') {
+        return 'https://stockpro-owner.onrender.com';
+    }
+    return location.origin;
+})();
+
+async function api(endpoint, method = 'GET', body = null) {
+    const opts = {
+        method,
+        headers: {
+            'Content-Type': 'application/json',
+            'x-master-key': MASTER_KEY_HEADER
+        }
+    };
+    if (body && method !== 'GET') opts.body = JSON.stringify(body);
+    const res = await fetch(SP_ADMIN_SERVER + endpoint, opts);
+    if (!res.ok) {
+        const err = await res.json().catch(() => ({ error: 'خطأ في الاتصال بالسيرفر' }));
+        throw new Error(err.error || 'خطأ غير معروف');
+    }
+    return res.json();
 }
-function localSave(key, data) {
-    localStorage.setItem('spadmin_' + key, JSON.stringify(data));
-}
-function genId() { return 'c_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
 
 // ── Self-Validating License Key (uses spHash, spChecksum, SP_SECRET, SP_CHARS from stockpro-data.js) ──
 const SP_PLAN_CODE = { basic: 'B', premium: 'P', enterprise: 'E' };
@@ -37,170 +53,9 @@ function genLicenseKey(plan) {
     const g1 = rnd();
     const g2 = rnd();
     const planCode = SP_PLAN_CODE[plan] || 'B';
-    const g3 = planCode + rnd().slice(1); // First char = plan code
+    const g3 = planCode + rnd().slice(1);
     const g4 = spChecksum(g1, g2, g3);
     return 'SP-' + g1 + '-' + g2 + '-' + g3 + '-' + g4;
-}
-
-function validateLicenseKey(serial) {
-    if (!serial || !serial.startsWith('SP-')) return null;
-    const parts = serial.split('-');
-    if (parts.length !== 5) return null;
-    const [, g1, g2, g3, g4] = parts;
-    if (!g1 || !g2 || !g3 || !g4) return null;
-    if (g1.length !== 4 || g2.length !== 4 || g3.length !== 4 || g4.length !== 4) return null;
-    const expected = spChecksum(g1, g2, g3);
-    if (g4 !== expected) return null;
-    const planCode = g3[0];
-    return SP_PLAN_FROM_CODE[planCode] || 'basic';
-}
-
-// ── Local API replacement — routes endpoints to localStorage ──
-async function api(endpoint, method = 'GET', body = null) {
-    // Dashboard
-    if (endpoint === '/api/admin/dashboard') {
-        const clients = localDB('clients');
-        const licenses = localDB('licenses');
-        const devices = localDB('devices');
-        return {
-            totalClients: clients.length,
-            activeClients: clients.filter(c => c.status === 'active').length,
-            expiredClients: clients.filter(c => c.status === 'expired').length,
-            totalDevices: devices.length,
-            onlineDevices: devices.filter(d => d.status === 'online').length,
-            activeLicenses: licenses.filter(l => l.status === 'active').length,
-            recentClients: clients.slice(-5).reverse(),
-            recentDevices: devices.slice(-5).reverse()
-        };
-    }
-
-    // Clients
-    if (endpoint === '/api/admin/clients' && method === 'GET') {
-        return localDB('clients').reverse();
-    }
-    if (endpoint === '/api/admin/clients' && method === 'POST') {
-        const clients = localDB('clients');
-        const id = genId();
-        const cl = { id, ...body, createdAt: new Date().toISOString() };
-        if (!cl.startDate) cl.startDate = new Date().toISOString();
-        if (!cl.endDate) { const d = new Date(); d.setDate(d.getDate() + 365); cl.endDate = d.toISOString(); }
-        if (!cl.status) cl.status = 'active';
-        if (!cl.plan) cl.plan = 'basic';
-        const licenseKey = genLicenseKey(cl.plan);
-        cl.licenseKey = licenseKey;
-        clients.push(cl);
-        localSave('clients', clients);
-        // Auto-create license
-        const licenses = localDB('licenses');
-        licenses.push({ id: 'l_' + Date.now(), clientId: id, licenseKey, plan: cl.plan, startDate: cl.startDate, endDate: cl.endDate, status: 'active', company: cl.company, clientName: cl.name });
-        localSave('licenses', licenses);
-        return cl;
-    }
-    if (endpoint.match(/\/api\/admin\/clients\/(.+)/) && method === 'PUT') {
-        const id = endpoint.split('/').pop();
-        const clients = localDB('clients');
-        const idx = clients.findIndex(c => c.id === id);
-        if (idx === -1) throw new Error('العميل غير موجود');
-        clients[idx] = { ...clients[idx], ...body };
-        localSave('clients', clients);
-        return clients[idx];
-    }
-    if (endpoint.match(/\/api\/admin\/clients\/(.+)/) && method === 'DELETE') {
-        const id = endpoint.split('/').pop();
-        let clients = localDB('clients');
-        clients = clients.filter(c => c.id !== id);
-        localSave('clients', clients);
-        let licenses = localDB('licenses');
-        licenses = licenses.filter(l => l.clientId !== id);
-        localSave('licenses', licenses);
-        let devices = localDB('devices');
-        devices = devices.filter(d => d.clientId !== id);
-        localSave('devices', devices);
-        return { success: true };
-    }
-    if (endpoint.match(/\/api\/admin\/clients\/(.+)/) && method === 'GET') {
-        const id = endpoint.split('/').pop();
-        const clients = localDB('clients');
-        const client = clients.find(c => c.id === id);
-        if (!client) throw new Error('العميل غير موجود');
-        const devices = localDB('devices').filter(d => d.clientId === id);
-        const licenses = localDB('licenses').filter(l => l.clientId === id);
-        return { client, devices, licenses };
-    }
-
-    // Licenses
-    if (endpoint === '/api/admin/licenses' && method === 'GET') {
-        return localDB('licenses').reverse();
-    }
-    if (endpoint === '/api/admin/licenses' && method === 'POST') {
-        const licenses = localDB('licenses');
-        const licenseKey = genLicenseKey(body.plan || 'basic');
-        const start = new Date().toISOString();
-        const end = new Date(); end.setDate(end.getDate() + (body.days || 365));
-        const clients = localDB('clients');
-        const client = clients.find(c => c.id === body.clientId);
-        const lic = { id: 'l_' + Date.now(), clientId: body.clientId, licenseKey, plan: body.plan || 'basic', startDate: start, endDate: end.toISOString(), status: 'active', company: client?.company, clientName: client?.name };
-        licenses.push(lic);
-        localSave('licenses', licenses);
-        // Update client
-        if (client) {
-            client.licenseKey = licenseKey;
-            client.plan = body.plan || 'basic';
-            client.startDate = start;
-            client.endDate = end.toISOString();
-            client.status = 'active';
-            localSave('clients', clients);
-        }
-        return lic;
-    }
-    if (endpoint.match(/\/api\/admin\/licenses\/(.+)\/renew/)) {
-        const id = endpoint.split('/')[4];
-        const licenses = localDB('licenses');
-        const lic = licenses.find(l => l.id === id);
-        if (!lic) throw new Error('الترخيص غير موجود');
-        const end = new Date(); end.setDate(end.getDate() + (body?.days || 365));
-        lic.endDate = end.toISOString();
-        lic.status = 'active';
-        localSave('licenses', licenses);
-        const clients = localDB('clients');
-        const cl = clients.find(c => c.id === lic.clientId);
-        if (cl) { cl.endDate = end.toISOString(); cl.status = 'active'; localSave('clients', clients); }
-        return { success: true, endDate: end.toISOString() };
-    }
-    if (endpoint.match(/\/api\/admin\/licenses\/(.+)\/revoke/)) {
-        const id = endpoint.split('/')[4];
-        const licenses = localDB('licenses');
-        const lic = licenses.find(l => l.id === id);
-        if (!lic) throw new Error('الترخيص غير موجود');
-        lic.status = 'revoked';
-        localSave('licenses', licenses);
-        const clients = localDB('clients');
-        const cl = clients.find(c => c.id === lic.clientId);
-        if (cl) { cl.status = 'suspended'; localSave('clients', clients); }
-        return { success: true };
-    }
-
-    // Devices
-    if (endpoint === '/api/admin/devices' && method === 'GET') {
-        return localDB('devices').reverse();
-    }
-    if (endpoint.match(/\/api\/admin\/devices\/(.+)/) && method === 'DELETE') {
-        const id = endpoint.split('/').pop();
-        let devices = localDB('devices');
-        devices = devices.filter(d => d.id !== id);
-        localSave('devices', devices);
-        return { success: true };
-    }
-
-    // Admin Users
-    if (endpoint === '/api/admin/users') {
-        return [
-            { id: 'au1', username: 'admin', name: 'مدير النظام', role: 'super_admin', email: 'admin@stockpro.com', phone: '01000000000' },
-            { id: 'au2', username: 'support', name: 'دعم فني', role: 'support', email: 'support@stockpro.com', phone: '01111111111' }
-        ];
-    }
-
-    throw new Error('Unknown endpoint: ' + endpoint);
 }
 
 // ── RBAC ──
@@ -221,7 +76,7 @@ function can(action) {
 function canEdit() { return can('all') || can('manage_clients'); }
 function canDelete() { return can('all'); }
 
-// ── Auth (Local) ──
+// ── Auth (Server) ──
 async function adminLogin() {
     const username = $('login-user').value.trim();
     const password = $('login-pass').value;
@@ -233,28 +88,36 @@ async function adminLogin() {
         return;
     }
 
-    // Local auth
-    const users = { admin: { pass: 'admin123', name: 'مدير النظام', role: 'super_admin' }, support: { pass: 'support123', name: 'دعم فني', role: 'support' } };
-    const u = users[username];
-    if (!u || u.pass !== password) {
-        adminToast('❌ بيانات خاطئة', 'error');
-        $('login-pass').value = '';
-        return;
+    try {
+        const result = await fetch(SP_ADMIN_SERVER + '/api/admin/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'x-master-key': MASTER_KEY_HEADER },
+            body: JSON.stringify({ username, password })
+        });
+        const data = await result.json();
+        if (!result.ok) {
+            adminToast('❌ ' + (data.error || 'بيانات خاطئة'), 'error');
+            $('login-pass').value = '';
+            return;
+        }
+
+        ADMIN.user = data.user;
+        ADMIN.token = data.token;
+
+        $('login-screen').style.display = 'none';
+        $('admin-app').style.display = 'flex';
+        $('admin-user-name').textContent = data.user.name;
+        $('admin-user-role').textContent = ROLES[data.user.role]?.label || data.user.role;
+        $('sidebar-user-info').textContent = ROLES[data.user.role]?.icon + ' ' + data.user.name;
+
+        const permNav = document.querySelector('[data-nav="permissions"]');
+        if (permNav) permNav.style.display = (data.user.role === 'super_admin') ? '' : 'none';
+
+        adminToast('✅ مرحباً ' + data.user.name);
+        renderAdminScreen();
+    } catch (err) {
+        adminToast('❌ تعذر الاتصال بالسيرفر', 'error');
     }
-
-    ADMIN.user = { id: 'au1', username, name: u.name, role: u.role };
-
-    $('login-screen').style.display = 'none';
-    $('admin-app').style.display = 'flex';
-    $('admin-user-name').textContent = u.name;
-    $('admin-user-role').textContent = ROLES[u.role]?.label || u.role;
-    $('sidebar-user-info').textContent = ROLES[u.role]?.icon + ' ' + u.name;
-
-    const permNav = document.querySelector('[data-nav="permissions"]');
-    if (permNav) permNav.style.display = (u.role === 'super_admin') ? '' : 'none';
-
-    adminToast('✅ مرحباً ' + u.name);
-    renderAdminScreen();
 }
 
 function adminLogout() {
@@ -339,7 +202,7 @@ async function renderClients(c) {
         </div>
         <div class="admin-table-wrap">
             <table class="admin-table"><thead><tr>
-                <th>الشركة</th><th>العميل</th><th>الهاتف</th><th>الخطة</th><th>الحالة</th><th>مفتاح الترخيص</th><th>🔒 الجهاز</th><th>إجراءات</th>
+                <th>الشركة</th><th>العميل</th><th>الهاتف</th><th>الخطة</th><th>الحالة</th><th>مفتاح الترخيص</th><th>إجراءات</th>
             </tr></thead><tbody id="clients-tbody"></tbody></table>
         </div>`;
         renderClientRows(ADMIN.cache.clients);
@@ -355,25 +218,19 @@ function renderClientRows(clients) {
     if (q) filtered = filtered.filter(cl => cl.name.includes(q) || cl.company.includes(q) || (cl.phone || '').includes(q));
     const tbody = $('clients-tbody');
     if (!tbody) return;
-    tbody.innerHTML = filtered.map(cl => {
-        const lockInfo = typeof getDeviceLockInfo === 'function' ? getDeviceLockInfo(cl.licenseKey) : null;
-        return `<tr>
+    tbody.innerHTML = filtered.map(cl => `<tr>
         <td><strong>${cl.company}</strong></td>
         <td>${cl.name}</td>
         <td style="direction:ltr;text-align:right">${cl.phone || '—'}</td>
         <td><span class="badge badge-purple">${planLabel(cl.plan)}</span></td>
         <td><span class="badge ${cl.status === 'active' ? 'badge-green' : 'badge-red'}">${cl.status === 'active' ? 'نشط' : cl.status === 'suspended' ? 'معلق' : 'منتهي'}</span></td>
         <td><code style="font-size:10px;color:var(--accent)">${cl.licenseKey || '—'}</code></td>
-        <td>${lockInfo
-                ? '<span class="badge badge-yellow" style="cursor:pointer" onclick="adminUnlockDevice(\'' + cl.licenseKey + '\')" title="اضغط لفك القفل">🔒 مقفول</span>'
-                : '<span class="badge badge-green">🔓 غير مقفول</span>'}
-        </td>
         <td><div class="action-row">
             <button class="action-btn" onclick="viewClient('${cl.id}')" title="عرض">👁️</button>
             ${canEdit() ? `<button class="action-btn" onclick="openClientForm('${cl.id}')" title="تعديل">✏️</button>` : ''}
             ${canDelete() ? `<button class="action-btn del" onclick="deleteClient('${cl.id}')" title="حذف">🗑️</button>` : ''}
         </div></td>
-    </tr>`}).join('') || '<tr><td colspan="8" class="empty-state">لا يوجد عملاء</td></tr>';
+    </tr>`).join('') || '<tr><td colspan="7" class="empty-state">لا يوجد عملاء</td></tr>';
 }
 
 function openClientForm(id) {
@@ -481,33 +338,8 @@ async function viewClient(id) {
             ${devices.length ? `<div class="client-detail-card" style="margin-top:16px"><h4>💻 الأجهزة (${devices.length})</h4>
                 ${devices.map(d => `<div class="toggle-wrap"><span>${d.deviceName} (${d.deviceType})</span><span class="badge ${d.status === 'online' ? 'badge-green' : 'badge-red'}">${d.status === 'online' ? 'متصل' : 'غير متصل'}</span></div>`).join('')}
             </div>` : ''}
-            <div class="client-detail-card" style="margin-top:16px"><h4>🔒 قفل الجهاز</h4>
-                ${(function () {
-                const lockInfo = typeof getDeviceLockInfo === 'function' ? getDeviceLockInfo(cl.licenseKey) : null;
-                if (lockInfo) {
-                    return '<div class="toggle-wrap"><span>الحالة</span><span class="badge badge-yellow">🔒 مقفول على جهاز</span></div>'
-                        + '<div class="toggle-wrap"><span>Device ID</span><code style="font-size:10px;color:var(--muted)">' + lockInfo.slice(0, 20) + '...</code></div>'
-                        + '<div style="margin-top:12px;text-align:center"><button class="btn btn-warning" onclick="adminUnlockDevice(\'' + cl.licenseKey + '\');closeAdminModal();setTimeout(()=>viewClient(\'' + id + '\'),300)" style="background:#f59e0b;color:#000;border:none;padding:10px 24px;border-radius:8px;font-weight:700;cursor:pointer;font-family:Cairo,sans-serif">🔓 فك قفل الجهاز</button></div>';
-                } else {
-                    return '<div class="toggle-wrap"><span>الحالة</span><span class="badge badge-green">🔓 غير مقفول — يمكن التفعيل من أي جهاز</span></div>';
-                }
-            })()}
-            </div>
         </div>`);
     } catch (err) { adminToast('❌ ' + err.message, 'error'); }
-}
-
-// ── Device Unlock (Admin) ──
-function adminUnlockDevice(licenseKey) {
-    if (!confirm('فك قفل الجهاز لهذا الترخيص؟ سيتمكن العميل من التفعيل على جهاز جديد.')) return;
-    if (typeof unlockDevice === 'function') {
-        unlockDevice(licenseKey);
-    } else {
-        const lockKey = 'sp_device_lock_' + licenseKey.replace(/[^A-Z0-9]/g, '');
-        localStorage.removeItem(lockKey);
-    }
-    adminToast('✅ تم فك قفل الجهاز — يمكن للعميل التفعيل على جهاز جديد');
-    renderAdminScreen();
 }
 
 // ═══════════════════════════════════════════════════

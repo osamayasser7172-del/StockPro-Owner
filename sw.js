@@ -1,19 +1,20 @@
 // ═══════════════════════════════════════════════════
 //  StockPro — Service Worker (PWA Offline Support)
+//  NOTE: Admin panel is NOT cached — it must always
+//        fetch fresh from server to create real clients
 // ═══════════════════════════════════════════════════
-const CACHE_NAME = 'stockpro-v1';
+const CACHE_NAME = 'stockpro-v3'; // bumped to bust old cache
 const ASSETS = [
     'stockpro.html',
     'stockpro.css',
     'stockpro.js',
     'stockpro-data.js',
-    'admin.html',
-    'admin.css',
-    'admin.js',
     'manifest.json',
+    // admin.html, admin.css, admin.js, sp-admin.js, sp-core.js
+    // are intentionally NOT cached — they must always be fresh
 ];
 
-// Install — cache all assets
+// Install — cache client assets only
 self.addEventListener('install', event => {
     event.waitUntil(
         caches.open(CACHE_NAME).then(cache => cache.addAll(ASSETS))
@@ -21,7 +22,7 @@ self.addEventListener('install', event => {
     self.skipWaiting();
 });
 
-// Activate — clean old caches
+// Activate — DELETE all old caches
 self.addEventListener('activate', event => {
     event.waitUntil(
         caches.keys().then(keys =>
@@ -31,12 +32,23 @@ self.addEventListener('activate', event => {
     self.clients.claim();
 });
 
-// Fetch — serve from cache or network
+// Fetch — network-first for API and admin, cache-first for client assets
 self.addEventListener('fetch', event => {
+    const url = new URL(event.request.url);
+
+    // NEVER cache admin panel files or API calls — always go to network
+    if (url.pathname.includes('admin') ||
+        url.pathname.includes('sp-admin') ||
+        url.pathname.includes('sp-core') ||
+        url.pathname.startsWith('/api/')) {
+        event.respondWith(fetch(event.request));
+        return;
+    }
+
+    // For client assets: cache-first with network fallback
     event.respondWith(
         caches.match(event.request).then(cached => {
             return cached || fetch(event.request).then(response => {
-                // Cache new requests
                 if (response.status === 200) {
                     const clone = response.clone();
                     caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
@@ -44,7 +56,6 @@ self.addEventListener('fetch', event => {
                 return response;
             });
         }).catch(() => {
-            // Offline fallback
             if (event.request.destination === 'document') {
                 return caches.match('stockpro.html');
             }

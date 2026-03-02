@@ -290,11 +290,16 @@ async function saveClient(id) {
             adminToast('✅ تم تحديث العميل');
         } else {
             const result = await api('/api/admin/clients', 'POST', data);
+            // Show serial prominently
+            alert('✅ تم إنشاء العميل بنجاح!\n\nالسيريال: ' + result.licenseKey + '\n\nانسخه وأعطيه للعميل');
             adminToast('✅ تم إضافة العميل — المفتاح: ' + result.licenseKey);
         }
         closeAdminModal();
         renderAdminScreen();
-    } catch (err) { adminToast('❌ ' + err.message, 'error'); }
+    } catch (err) {
+        alert('❌ خطأ في إنشاء العميل!\n\nالسبب: ' + err.message + '\n\nالسيرفر: ' + SP_ADMIN_SERVER);
+        adminToast('❌ ' + err.message, 'error');
+    }
 }
 
 async function deleteClient(id) {

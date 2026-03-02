@@ -88,8 +88,35 @@
     <!-- Toast -->
     <div class="toast-container" id="admin-toast"></div>
 
-    <script src="sp-core.js"></script>
-    <script src="sp-admin.js"></script>
+    <!-- FORCE KILL old service worker cache before loading ANY scripts -->
+    <script>
+        (async function () {
+            // 1. Unregister ALL service workers
+            if ('serviceWorker' in navigator) {
+                const regs = await navigator.serviceWorker.getRegistrations();
+                for (const r of regs) { await r.unregister(); console.log('🔧 SW unregistered'); }
+            }
+            // 2. Delete ALL caches
+            if ('caches' in window) {
+                const keys = await caches.keys();
+                for (const k of keys) { await caches.delete(k); console.log('🗑️ Cache deleted:', k); }
+            }
+            // 3. Load scripts with cache-busting
+            const bust = Date.now();
+            function loadScript(src) {
+                return new Promise((resolve, reject) => {
+                    const s = document.createElement('script');
+                    s.src = src + '?v=' + bust;
+                    s.onload = resolve;
+                    s.onerror = reject;
+                    document.body.appendChild(s);
+                });
+            }
+            await loadScript('sp-core.js');
+            await loadScript('sp-admin.js');
+            console.log('✅ Admin scripts loaded fresh (no cache)');
+        })();
+    </script>
 </body>
 
 </html>

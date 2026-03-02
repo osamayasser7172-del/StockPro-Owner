@@ -194,9 +194,9 @@ function startHeartbeat() {
     if (_heartbeatTimer) clearInterval(_heartbeatTimer);
     // First heartbeat immediately
     _doHeartbeat();
-    // Then every 5 minutes
-    _heartbeatTimer = setInterval(_doHeartbeat, 5 * 60 * 1000);
-    console.log('💓 [Heartbeat] Started (every 5 minutes)');
+    // Then every 1 minute (quick license revocation detection)
+    _heartbeatTimer = setInterval(_doHeartbeat, 60 * 1000);
+    console.log('💓 [Heartbeat] Started (every 1 minute)');
 }
 
 function stopHeartbeat() {

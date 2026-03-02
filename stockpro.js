@@ -2207,7 +2207,7 @@ function startExpiryWatcher() {
             clearInterval(_expiryTimer);
             _expiryTimer = null;
         }
-    }, 5 * 60 * 1000); // Every 5 minutes
+    }, 60 * 1000); // Every 1 minute
 }
 
 // ═══════════════════════════════════════════════════
@@ -2261,14 +2261,19 @@ async function activateSerial() {
         return;
     }
 
-    errEl.textContent = '⏳ جاري التحقق...';
+    errEl.textContent = '⏳ جاري التحقق من: ' + serial + ' ...';
     errEl.style.color = 'var(--accent)';
+    console.log('🔑 [DEBUG] Validating serial:', serial);
+    console.log('🔑 [DEBUG] Server URL:', SP_SERVER_URL);
 
     const result = await validateSerial(serial);
+    console.log('🔑 [DEBUG] Server response:', JSON.stringify(result));
     errEl.style.color = '';
     if (!result || !result.valid) {
+        const debugInfo = '\n[DEBUG: Server=' + SP_SERVER_URL + ' | Serial=' + serial + ' | Response=' + JSON.stringify(result) + ']';
         errEl.textContent = '❌ ' + (result?.error || 'مفتاح الترخيص غير صالح أو منتهي الصلاحية');
-        input.value = '';
+        console.error('🔑 [DEBUG] Validation failed:', debugInfo);
+        // Don't clear input so user can verify what they typed
         return;
     }
 

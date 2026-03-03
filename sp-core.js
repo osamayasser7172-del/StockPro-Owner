@@ -566,7 +566,7 @@ function getTotalStock(productId) {
     return Object.values(product.stock).reduce((sum, v) => sum + v, 0);
 }
 
-function getLowOS Communicationducts() {
+function getLowStockProducts() {
     const db = loadDB();
     return db.products.filter(p => {
         const total = p.stock ? Object.values(p.stock).reduce((s, v) => s + v, 0) : 0;

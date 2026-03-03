@@ -138,7 +138,7 @@ function renderScreen() {
 }
 
 function updateAlerts() {
-    const low = getLowOS Communicationducts();
+    const low = getLowStockProducts();
     const badge = $('low-stock-badge');
     const dot = $('notif-dot');
     if (low.length > 0) {
@@ -260,7 +260,7 @@ function finishOnboarding() {
 
 // ── Notifications ──
 function showNotifications() {
-    const low = getLowOS Communicationducts();
+    const low = getLowStockProducts();
     let html = `<div class="modal-header"><div class="modal-title">🔔 التنبيهات</div><button class="modal-close" onclick="closeModal()">✕</button></div><div class="modal-body">`;
     if (low.length === 0) html += '<div class="empty-state"><div class="empty-icon">🎉</div><div class="empty-title">لا توجد تنبيهات</div></div>';
     else {
@@ -286,7 +286,7 @@ function renderDashboard(c) {
     const totalCost = sales.reduce((s, v) => s + v.items.reduce((ss, it) => ss + (it.costPrice || 0) * it.qty, 0), 0);
     const totalProfit = totalRevenue - totalCost;
     const totalItems = sales.reduce((s, v) => s + v.items.reduce((ss, it) => ss + it.qty, 0), 0);
-    const low = getLowOS Communicationducts();
+    const low = getLowStockProducts();
     // Expenses this month
     const expenses = getAllRecords('expenses') || [];
     const now = new Date();
@@ -360,7 +360,7 @@ function renderInventory(c) {
     <div class="quick-stats">
         <div class="quick-stat">إجمالي الأصناف: <strong>${products.length}</strong></div>
         <div class="quick-stat">إجمالي المخزون: <strong>${products.reduce((s, p) => s + (p.stock ? Object.values(p.stock).reduce((a, b) => a + b, 0) : 0), 0)}</strong></div>
-        <div class="quick-stat" style="color:var(--yellow)">نقص مخزون: <strong>${getLowOS Communicationducts().length}</strong></div>
+        <div class="quick-stat" style="color:var(--yellow)">نقص مخزون: <strong>${getLowStockProducts().length}</strong></div>
     </div>
     <div class="table-container">
         <table class="data-table" id="inv-table">

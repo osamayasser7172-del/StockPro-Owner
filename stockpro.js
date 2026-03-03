@@ -2028,8 +2028,26 @@ function spAdminLogout() {
 }
 
 function startApp() {
+    const isMaster = localStorage.getItem('sp_is_master') === '1';
     const s = getSettings();
     document.body.dataset.theme = s.theme || 'dark';
+
+    // Master mode: skip onboarding — auto-initialize if needed
+    if (!s.onboarded && isMaster) {
+        const db = loadDB();
+        const clientInfo = getActiveClient();
+        db.settings.onboarded = true;
+        db.settings.companyName = (clientInfo && clientInfo.company) || 'عرض بيانات العميل';
+        saveDB(db);
+        // Reload settings after auto-init
+        const s2 = getSettings();
+        $('onboarding').classList.add('hidden');
+        $('app').classList.remove('hidden');
+        $('brand-name').textContent = '👑 ' + (s2.companyName || 'StockPro');
+        $('footer-role').textContent = '👤 مالك البرنامج | وضع المراقبة';
+        navigate('dashboard');
+        return;
+    }
 
     if (!s.onboarded) {
         $('onboarding').classList.remove('hidden');

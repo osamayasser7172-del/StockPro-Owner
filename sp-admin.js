@@ -1,5 +1,5 @@
 // ═══════════════════════════════════════════════════
-//  StockPro Admin Panel — admin.js (Local Mode)
+//  OS Communication Admin Panel — admin.js (Local Mode)
 // ═══════════════════════════════════════════════════
 
 const ADMIN = { screen: 'dashboard', user: null, cache: {} };

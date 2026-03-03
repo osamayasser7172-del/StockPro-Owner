@@ -1,5 +1,5 @@
 // ===================================================
-//  StockPro — stockpro.js  (Part 1: Core + Navigation)
+//  OS Communication — stockpro.js  (Part 1: Core + Navigation)
 // ===================================================
 
 let APP = { screen: 'dashboard', charts: {}, lockPin: '', lockAttempts: 0 };
@@ -138,7 +138,7 @@ function renderScreen() {
 }
 
 function updateAlerts() {
-    const low = getLowStockProducts();
+    const low = getLowOS Communicationducts();
     const badge = $('low-stock-badge');
     const dot = $('notif-dot');
     if (low.length > 0) {
@@ -255,12 +255,12 @@ function finishOnboarding() {
     $('app').classList.remove('hidden');
     $('brand-name').textContent = $('ob-company').value.trim();
     navigate('dashboard');
-    toast('🎉 مرحباً بك في StockPro!');
+    toast('🎉 مرحباً بك في OS Communication!');
 }
 
 // ── Notifications ──
 function showNotifications() {
-    const low = getLowStockProducts();
+    const low = getLowOS Communicationducts();
     let html = `<div class="modal-header"><div class="modal-title">🔔 التنبيهات</div><button class="modal-close" onclick="closeModal()">✕</button></div><div class="modal-body">`;
     if (low.length === 0) html += '<div class="empty-state"><div class="empty-icon">🎉</div><div class="empty-title">لا توجد تنبيهات</div></div>';
     else {
@@ -286,7 +286,7 @@ function renderDashboard(c) {
     const totalCost = sales.reduce((s, v) => s + v.items.reduce((ss, it) => ss + (it.costPrice || 0) * it.qty, 0), 0);
     const totalProfit = totalRevenue - totalCost;
     const totalItems = sales.reduce((s, v) => s + v.items.reduce((ss, it) => ss + it.qty, 0), 0);
-    const low = getLowStockProducts();
+    const low = getLowOS Communicationducts();
     // Expenses this month
     const expenses = getAllRecords('expenses') || [];
     const now = new Date();
@@ -360,7 +360,7 @@ function renderInventory(c) {
     <div class="quick-stats">
         <div class="quick-stat">إجمالي الأصناف: <strong>${products.length}</strong></div>
         <div class="quick-stat">إجمالي المخزون: <strong>${products.reduce((s, p) => s + (p.stock ? Object.values(p.stock).reduce((a, b) => a + b, 0) : 0), 0)}</strong></div>
-        <div class="quick-stat" style="color:var(--yellow)">نقص مخزون: <strong>${getLowStockProducts().length}</strong></div>
+        <div class="quick-stat" style="color:var(--yellow)">نقص مخزون: <strong>${getLowOS Communicationducts().length}</strong></div>
     </div>
     <div class="table-container">
         <table class="data-table" id="inv-table">
@@ -1883,7 +1883,7 @@ function saveAllSettings() {
         pin: $('set-pin').value.trim(),
         activeRole: $('set-role').value
     });
-    $('brand-name').textContent = $('set-company').value.trim() || 'StockPro';
+    $('brand-name').textContent = $('set-company').value.trim() || 'OS Communication';
     $('footer-role').textContent = '👤 ' + ($('set-role').value === 'admin' ? 'مدير النظام' : $('set-role').value === 'cashier' ? 'كاشير' : 'مشاهد') + ' | ' + getPlanLabel();
     // Update sidebar logo
     const brandIcon = document.querySelector('.brand-icon');
@@ -2043,7 +2043,7 @@ function startApp() {
         const s2 = getSettings();
         $('onboarding').classList.add('hidden');
         $('app').classList.remove('hidden');
-        $('brand-name').textContent = '👑 ' + (s2.companyName || 'StockPro');
+        $('brand-name').textContent = '👑 ' + (s2.companyName || 'OS Communication');
         $('footer-role').textContent = '👤 مالك البرنامج | وضع المراقبة';
         navigate('dashboard');
         return;
@@ -2055,7 +2055,7 @@ function startApp() {
     } else {
         $('onboarding').classList.add('hidden');
         $('app').classList.remove('hidden');
-        $('brand-name').textContent = s.companyName || 'StockPro';
+        $('brand-name').textContent = s.companyName || 'OS Communication';
         $('footer-role').textContent = '👤 ' + (currentAdmin ? currentAdmin.name : (s.activeRole === 'admin' ? 'مدير النظام' : s.activeRole === 'cashier' ? 'كاشير' : 'مشاهد')) + ' | ' + getPlanLabel();
 
         // Show logo in sidebar if set

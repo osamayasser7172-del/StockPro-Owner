@@ -1,7 +1,7 @@
 {
-    "name": "StockPro",
-    "short_name": "StockPro",
-    "description": "نظام إدارة المخازن والمبيعات - StockPro",
+    "name": "OS Communication",
+    "short_name": "OS Communication",
+    "description": "نظام إدارة المخازن والمبيعات - OS Communication",
     "start_url": "stockpro.html",
     "display": "standalone",
     "orientation": "any",

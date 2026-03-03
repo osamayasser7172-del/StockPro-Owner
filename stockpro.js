@@ -242,7 +242,7 @@ function finishOnboarding() {
         taxRate: parseFloat($('ob-tax').value) || 14,
         onboarded: true
     });
-    seedSampleData();
+    // Client starts with clean, empty database — no sample data
     $('onboarding').classList.add('hidden');
 
     // After onboarding, require login before showing app
